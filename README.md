@@ -34,29 +34,6 @@ El proyecto está construido con las tecnologías más modernas y performantes d
 
 ---
 
-## 🚀 Instalación y Configuración
-
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/usuario/nitido.git
-   cd nitido
-   ```
-
-2. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
-
-3. **Configurar variables de entorno:**
-   Crea un archivo `.env.local` con tus credenciales de Firebase.
-
-4. **Ejecutar en desarrollo:**
-   ```bash
-   npm run dev
-   ```
-
----
-
 ## 🎨 Diseño y UX
 
 El diseño de **Nítido** sigue una estética "Urban Clinical", caracterizada por:
@@ -65,4 +42,4 @@ El diseño de **Nítido** sigue una estética "Urban Clinical", caracterizada po
 - Micro-animaciones para una experiencia de usuario fluida y premium.
 
 ---
-Desarrollado con ❤️ por **Juan** y **Antigravity**.
+Desarrollado por **Juan17md**.
