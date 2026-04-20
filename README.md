@@ -8,7 +8,24 @@ Este sistema permite llevar un control riguroso de la contabilidad, el inventari
 
 ## ✨ Características Principales
 
-### 💈 Gestión de Barbería
+- **Diseño Urban Clinical:** Estética premium con tipografía técnica (`Fira Sans/Code`), efectos glassmorphism y micro-interacciones avanzadas.
+- **Gestión Dual:** Control especializado para Barbería y Lavandería en una sola plataforma.
+- **Contabilidad e Inventario:** Seguimiento preciso de ingresos, egresos y stock de productos.
+- **Arquitectura Robusta:** Desarrollado con Next.js 16 (App Router), Tailwind V4 y Firebase para una escalabilidad máxima.
+
+---
+
+## 🎨 Sistema de Diseño
+
+El proyecto utiliza un sistema de diseño maestro documentado en [[docs-obsidian/00_Design_System.md]], basado en:
+
+- **Minimalismo de Alto Contraste:** Uso estratégico de oklch para colores ultra-puros.
+- **Tipografía Editorial:** Jerarquías claras inspiradas en interfaces técnicas y clínicas.
+- **Componentes Reactivos:** UI que responde al usuario con animaciones suaves y feedback táctil visual.
+
+---
+
+## 🛠️ Stack Tecnológico
 - **Dashboard de Servicios**: Visualización en tiempo real de los cortes y tratamientos realizados.
 *   **Finanzas Inteligentes**: Reportes semanales y mensuales detallados.
 *   **Control de Inventario**: Gestión de productos y suministros clínicos.

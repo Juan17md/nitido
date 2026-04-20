@@ -7,6 +7,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { QuickAction } from "@/components/dashboard/QuickAction";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { 
   Scissors, 
   Waves, 
@@ -32,9 +35,15 @@ export default function DashboardPage() {
   if (loading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-sm font-medium text-muted-foreground animate-pulse">Sincronizando con Nítido...</p>
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            <div className="h-16 w-16 animate-spin rounded-3xl border-4 border-primary border-t-transparent shadow-2xl shadow-primary/20" />
+            <div className="absolute inset-0 flex items-center justify-center font-black italic text-primary">N</div>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-slate-900 animate-pulse">Nítido</p>
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Sincronizando Sistema</p>
+          </div>
         </div>
       </div>
     );
@@ -48,16 +57,17 @@ export default function DashboardPage() {
         {/* Header Section */}
         <section className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-1">
-            <h2 className="text-3xl font-black tracking-tight text-slate-900 uppercase">
-              Panel <span className="text-primary italic">General</span>
+            <h2 className="text-4xl font-black tracking-tighter text-slate-900 uppercase">
+              Panel <span className="text-gradient italic">General</span>
             </h2>
-            <p className="text-muted-foreground font-medium">
-              Bienvenido, <span className="text-slate-900 font-bold">{user.email?.split("@")[0]}</span>. Gestiona tus emprendimientos desde un solo lugar.
+            <p className="text-muted-foreground font-medium flex items-center gap-2">
+              Bienvenido de nuevo, <span className="text-slate-900 font-black">{user.email?.split("@")[0]}</span> 
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             </p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground bg-white px-3 py-1.5 rounded-full shadow-sm border">
-            <Calendar className="h-3 w-3" />
-            <span>Domingo, 19 de Abril 2026</span>
+          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100">
+            <Calendar className="h-3 w-3 text-primary" />
+            <span>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
           </div>
         </section>
 
@@ -116,9 +126,9 @@ export default function DashboardPage() {
                 <QuickAction label="Inventario" icon={ClipboardList} variant="barber" />
                 <QuickAction label="Reporte" icon={TrendingUp} variant="barber" />
               </div>
-              <Button asChild className="w-full bg-blue-600 hover:bg-blue-700 font-bold h-12 shadow-lg shadow-blue-200">
-                <Link href="/barberia">Entrar a Barbería</Link>
-              </Button>
+              <Link href="/barberia" className={cn(buttonVariants({ variant: "default" }), "w-full bg-blue-600 hover:bg-blue-700 font-bold h-12 shadow-lg shadow-blue-200")}>
+                Entrar a Barbería
+              </Link>
             </CardContent>
           </Card>
 
@@ -143,9 +153,9 @@ export default function DashboardPage() {
                 <QuickAction label="Equipos" icon={ClipboardList} variant="laundry" />
                 <QuickAction label="Finanzas" icon={DollarSign} variant="laundry" />
               </div>
-              <Button asChild className="w-full bg-indigo-600 hover:bg-indigo-700 font-bold h-12 shadow-lg shadow-indigo-200">
-                <Link href="/lavanderia">Entrar a Lavandería</Link>
-              </Button>
+              <Link href="/lavanderia" className={cn(buttonVariants({ variant: "default" }), "w-full bg-indigo-600 hover:bg-indigo-700 font-bold h-12 shadow-lg shadow-indigo-200")}>
+                Entrar a Lavandería
+              </Link>
             </CardContent>
           </Card>
         </div>
@@ -154,14 +164,3 @@ export default function DashboardPage() {
   );
 }
 
-function Badge({ children, variant = "default", className }: { children: React.ReactNode, variant?: string, className?: string }) {
-  return (
-    <span className={cn(
-      "px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider",
-      variant === "outline" ? "border" : "bg-primary text-primary-foreground",
-      className
-    )}>
-      {children}
-    </span>
-  );
-}
