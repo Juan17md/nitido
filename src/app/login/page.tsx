@@ -1,119 +1,122 @@
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+"use client";
+
+import { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Scissors, Waves, LogIn } from "lucide-react";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleEmailLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      // Redirect to dashboard or home after successful login
-      router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message);
+      toast.success("¡Bienvenido a Nítido!");
+      router.push("/");
+    } catch (error: any) {
+      console.error(error);
+      toast.error("Error al iniciar sesión. Verifica tus credenciales.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Iniciar sesión</h2>
-          <p className="text-muted-foreground">
-            Accede a tu cuenta para gestionar tu barbería y alquiler de lavadoras
-          </p>
+    <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Shapes for Urban Clinical feel */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl" />
+      
+      <div className="w-full max-w-md space-y-8 z-10">
+        <div className="flex flex-col items-center justify-center space-y-2">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 rotate-3 transition-transform hover:rotate-0">
+            <span className="text-3xl font-black italic">N</span>
+          </div>
+          <h1 className="text-4xl font-black tracking-tighter text-primary">NÍTIDO</h1>
+          <p className="text-muted-foreground font-medium">Gestión de Barbería & Lavandería</p>
         </div>
-        <form onSubmit={handleEmailLogin} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">
-              Correo electrónico
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-md placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-              disabled={loading}
-            />
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-muted-foreground">
-              Contraseña
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-input rounded-md placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-              disabled={loading}
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full flex items-center justify-center px-3 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
-          </button>
-        </form>
-        <div className="flex flex-col items-center pt-4">
-          <div className="w-full flex items-center space-x-4 text-muted-foreground">
-            <div className="w-full border-t"></div>
-            <span>O continuar con</span>
-            <div className="w-full border-t"></div>
-          </div>
-          <button
-            onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center px-3 py-2 border border-input rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
-            disabled={loading}
-          >
-            {loading ? 'Autenticando...' : 'Continuar con Google'}
-            {!loading && (
-              <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 2a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5zm0 4a.5.5 0 01.5-.5h2a.5.5 0 010 1h-2a.5.5 0 01-.5-.5zm4-6a.5.5 0 01.5-.5h3a.5.5 0 010 1h-3a.5.5 0 01-.5-.5z" />
-              </svg>
-            )}
-          </button>
-        </div>
-        {error && (
-          <p className="mt-2 text-sm text-destructive w-full text-center">
-            {error}
-          </p>
-        )}
-      </div>
-      <div className="mt-6 text-sm text-muted-foreground text-center">
-        ¿No tienes una cuenta? <a href="/register" className="font-medium hover:underline">Regístrate</a>
+
+        <Card className="border-none shadow-2xl bg-white/80 backdrop-blur-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold">Iniciar Sesión</CardTitle>
+            <CardDescription>
+              Ingresa tus credenciales para acceder al sistema.
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleLogin}>
+            <CardContent className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="email">Correo Electrónico</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="nombre@ejemplo.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-white/50"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Contraseña</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="bg-white/50"
+                />
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col gap-4">
+              <Button 
+                type="submit" 
+                className="w-full font-bold h-11" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    Cargando...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <LogIn className="h-4 w-4" />
+                    Acceder al Sistema
+                  </span>
+                )}
+              </Button>
+              <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                <div className="flex items-center gap-1">
+                  <Scissors className="h-3 w-3" />
+                  <span>Barbería</span>
+                </div>
+                <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                <div className="flex items-center gap-1">
+                  <Waves className="h-3 w-3" />
+                  <span>Lavandería</span>
+                </div>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
+        
+        <p className="text-center text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} Nítido. Todos los derechos reservados.
+        </p>
       </div>
     </div>
   );
