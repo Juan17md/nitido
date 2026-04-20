@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Utility Scripts
 /scripts/crear-usuario.mjs
+
+# Obsidian Docs (Contains credentials)
+docs-obsidian
