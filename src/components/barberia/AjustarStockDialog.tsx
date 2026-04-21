@@ -98,7 +98,10 @@ export function AjustarStockDialog({ productos }: Props) {
 
             <div className="grid gap-2">
               <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Producto</Label>
-              <Select value={selectedId} onValueChange={setSelectedId}>
+              <Select
+                value={selectedId}
+                onValueChange={(value) => setSelectedId(value ?? "")}
+              >
                 <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50/50 text-[11px] font-bold">
                   <SelectValue placeholder="Seleccionar producto...">
                     {(val: string) => {

@@ -121,7 +121,10 @@ export function RegistrarGastoDialog({ onSave, variant = 'barberia' }: Props) {
               </div>
               <div className="grid gap-2">
                 <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Categoría</Label>
-                <Select value={categoria} onValueChange={setCategoria}>
+                <Select
+                  value={categoria}
+                  onValueChange={(value) => setCategoria(value ?? "")}
+                >
                   <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50/50 text-[11px] font-bold">
                     <SelectValue placeholder="Tipo..." />
                   </SelectTrigger>

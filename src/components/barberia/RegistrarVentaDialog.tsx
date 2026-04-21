@@ -80,7 +80,10 @@ export function RegistrarVentaDialog({ servicios }: Props) {
           <div className="space-y-4">
             <div className="grid gap-2">
               <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Servicio Realizado</Label>
-              <Select value={selectedServicioId} onValueChange={setSelectedServicioId}>
+              <Select
+                value={selectedServicioId}
+                onValueChange={(value) => setSelectedServicioId(value ?? "")}
+              >
                 <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50/50 text-[11px] font-bold">
                   <SelectValue placeholder="Seleccionar servicio...">
                     {(val: string) => {

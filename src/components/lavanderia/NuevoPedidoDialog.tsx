@@ -96,7 +96,10 @@ export function NuevoPedidoDialog({ servicios }: Props) {
           <div className="space-y-4">
             <div className="grid gap-2">
               <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Servicio de Lavandería</Label>
-              <Select value={selectedServicioId} onValueChange={setSelectedServicioId}>
+              <Select
+                value={selectedServicioId}
+                onValueChange={(value) => setSelectedServicioId(value ?? "")}
+              >
                 <SelectTrigger className="h-12 rounded-2xl border-transparent bg-slate-50 text-[11px] font-bold uppercase tracking-tight focus:bg-white transition-all">
                   <SelectValue placeholder="SELECCIONAR SERVICIO...">
                     {(val: string) => {
@@ -118,7 +121,10 @@ export function NuevoPedidoDialog({ servicios }: Props) {
 
             <div className="grid gap-2">
               <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Asignar Máquina (Opcional)</Label>
-              <Select value={selectedMaquinaId} onValueChange={setSelectedMaquinaId}>
+              <Select
+                value={selectedMaquinaId}
+                onValueChange={(value) => setSelectedMaquinaId(value ?? "ninguna")}
+              >
                 <SelectTrigger className="h-12 rounded-2xl border-transparent bg-slate-50 text-[11px] font-bold uppercase tracking-tight focus:bg-white transition-all">
                   <div className="flex items-center gap-2">
                     <Settings className="h-3.5 w-3.5 text-slate-400" />

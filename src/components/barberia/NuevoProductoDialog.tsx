@@ -105,7 +105,10 @@ export function NuevoProductoDialog() {
               </div>
               <div className="grid gap-2">
                 <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-1">Unidad</Label>
-                <Select value={unidad} onValueChange={setUnidad}>
+                <Select
+                  value={unidad}
+                  onValueChange={(value) => setUnidad(value ?? "unidades")}
+                >
                   <SelectTrigger className="h-12 rounded-xl border-slate-100 bg-slate-50/50 text-[11px] font-bold">
                     <SelectValue placeholder="Unidad...">
                       {(val: string) => {

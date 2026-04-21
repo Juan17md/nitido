@@ -53,7 +53,7 @@ export function NuevoServicioLavanderiaDialog({ servicio }: Props) {
         await agregarServicioLavanderia({
           nombre,
           precio: parseFloat(precio),
-
+          tipo: "otros",
           descripcion
         });
         toast.success("Servicio de lavandería creado");
