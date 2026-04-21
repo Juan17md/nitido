@@ -24,47 +24,45 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <Card className={cn(
-      "group relative overflow-hidden border-none shadow-lg bg-white transition-all hover:shadow-2xl hover:-translate-y-1", 
+      "group relative overflow-hidden border border-slate-100 bg-white transition-all md:hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]", 
       className
     )}>
-      {/* Background Pattern */}
-      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity pointer-events-none">
-        <Icon size={120} strokeWidth={1} />
+      {/* Background Pattern: Even more subtle */}
+      <div className="absolute top-0 right-0 p-4 opacity-[0.02] md:group-hover:opacity-[0.04] transition-opacity pointer-events-none">
+        <Icon size={100} strokeWidth={1} />
       </div>
 
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-        <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 relative z-10 pt-3 md:pt-6">
+        <CardTitle className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400">
           {title}
         </CardTitle>
-        <div className="p-2 rounded-xl bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-          <Icon className="h-4 w-4" />
+        <div className="flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-400 md:group-hover:bg-slate-900 md:group-hover:text-white transition-all duration-300">
+          <Icon className="h-2.5 w-2.5 md:h-3.5 md:w-3.5" />
         </div>
       </CardHeader>
       
-      <CardContent className="relative z-10">
-        <div className="text-3xl font-black tracking-tighter text-slate-900">{value}</div>
+      <CardContent className="relative z-10 pb-3 md:pb-6">
+        <div className="text-xl md:text-2xl font-bold tracking-tight text-slate-900">{value}</div>
         {(description || trend) && (
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-1 md:mt-2">
             {trend && (
               <span className={cn(
-                "text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1",
-                trend.positive ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+                "text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1",
+                trend.positive ? "bg-emerald-50/50 text-emerald-600" : "bg-rose-50/50 text-rose-600"
               )}>
                 <span className={cn("h-1 w-1 rounded-full", trend.positive ? "bg-emerald-500" : "bg-rose-500")} />
                 {trend.value}
               </span>
             )}
             {description && (
-              <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest">
+              <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
                 {description}
               </p>
             )}
           </div>
         )}
       </CardContent>
-
-      {/* Bottom accent line */}
-      <div className="absolute bottom-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
     </Card>
   );
 }
+

@@ -45,3 +45,10 @@ next-env.d.ts
 
 # Obsidian Docs (Contains credentials)
 docs-obsidian
+
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.agents
+.claude
+.gemini

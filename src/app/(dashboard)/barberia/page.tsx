@@ -1,0 +1,208 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { 
+  Scissors, 
+  ClipboardList, 
+  TrendingUp, 
+  DollarSign
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import Link from "next/link";
+import { startOfWeek, startOfMonth, isAfter } from "date-fns";
+
+// Importar servicios reales
+import { 
+  subscribeServicios, 
+  subscribeHistorial, 
+  subscribeInventario,
+  type Servicio,
+  type HistorialServicio,
+  type Producto 
+} from "@/lib/barberia-service";
+
+// Importar nuevos diálogos
+import { RegistrarVentaDialog } from "@/components/barberia/RegistrarVentaDialog";
+import { NuevoServicioDialog } from "@/components/barberia/NuevoServicioDialog";
+import { AjustarStockDialog } from "@/components/barberia/AjustarStockDialog";
+
+export default function BarberiaPage() {
+  // Estado real de datos
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [historial, setHistorial] = useState<HistorialServicio[]>([]);
+  const [inventario, setInventario] = useState<Producto[]>([]);
+
+  // Suscripciones en tiempo real
+  useEffect(() => {
+    const unsubServicios = subscribeServicios(setServicios);
+    const unsubHistorial = subscribeHistorial(setHistorial);
+    const unsubInventario = subscribeInventario(setInventario);
+
+    return () => {
+      unsubServicios();
+      unsubHistorial();
+      unsubInventario();
+    };
+  }, []);
+
+  // Cálculos dinámicos con filtros temporales reales
+  const now = new Date();
+  const semanaStart = startOfWeek(now, { weekStartsOn: 1 });
+  const mesStart = startOfMonth(now);
+
+  const ingresosSemana = historial
+    .filter(item => item.fecha && isAfter(item.fecha.toDate(), semanaStart))
+    .reduce((acc, curr) => acc + curr.precio, 0);
+
+  const ingresosMensuales = historial
+    .filter(item => item.fecha && isAfter(item.fecha.toDate(), mesStart))
+    .reduce((acc, curr) => acc + curr.precio, 0);
+
+  const serviciosMensuales = historial
+    .filter(item => item.fecha && isAfter(item.fecha.toDate(), mesStart))
+    .length;
+
+  return (
+    <div className="expansive-container mx-auto py-8 md:py-12 px-4 md:px-0 space-y-10">
+      {/* Header Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10"
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-slate-100">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-200 transition-transform hover:rotate-3">
+                <Scissors className="h-6 w-6" />
+              </div>
+              <div className="flex flex-col">
+                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400 border-slate-100 px-2 py-0.5 bg-white mb-1">
+                  Módulo Barbería
+                </Badge>
+                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                  Panel de <span className="italic font-light text-slate-400">Control</span>
+                </h2>
+              </div>
+            </div>
+            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
+              Gestiona el rendimiento operativo, las ventas diarias y el inventario de tu barbería desde una interfaz centralizada.
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6 md:space-y-8"
+      >
+        {/* Stats Grid */}
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+          <StatCard
+            title="Semana"
+            value={`$${ingresosSemana.toFixed(2)}`}
+            description="Semana actual"
+            icon={DollarSign}
+          />
+          <StatCard
+            title="Mes"
+            value={`$${ingresosMensuales.toFixed(2)}`}
+            description="Mes actual"
+            icon={TrendingUp}
+          />
+          <StatCard
+            title="Servicios"
+            value={serviciosMensuales.toString()}
+            description="este mes"
+            icon={ClipboardList}
+            className="sm:col-span-2 md:col-span-1"
+          />
+        </div>
+
+        <div className="grid gap-6 md:gap-8 grid-cols-1 md:grid-cols-3">
+          {/* Quick Actions */}
+          <Card className="md:col-span-1 border-slate-100 shadow-sm overflow-hidden flex flex-col">
+            <CardHeader className="bg-slate-50/50 pb-4">
+              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Acciones Rápidas</CardTitle>
+              <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Operaciones frecuentes</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6 grid gap-3">
+              <RegistrarVentaDialog servicios={servicios} />
+              <NuevoServicioDialog />
+              <AjustarStockDialog productos={inventario} />
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card className="md:col-span-2 border-slate-100 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-4">
+              <div>
+                <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Actividad Reciente</CardTitle>
+                <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Últimos registros</CardDescription>
+              </div>
+              <Link href="/barberia/historial">
+                <Button variant="ghost" size="sm" className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Ver Todos</Button>
+              </Link>
+            </CardHeader>
+            <CardContent className="px-0 md:px-6">
+              {historial.length === 0 ? (
+                <div className="py-10 text-center px-6">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-300">No hay registros hoy</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto scrollbar-hide">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="border-slate-50 hover:bg-transparent px-4">
+                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 pl-6 md:pl-4 whitespace-nowrap">Servicio</TableHead>
+                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Cliente</TableHead>
+                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Monto</TableHead>
+                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right pr-6 md:pr-4 whitespace-nowrap">Hora</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {historial.slice(0, 5).map((row) => (
+                        <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
+                          <TableCell className="py-4 pl-6 md:pl-4">
+                            <span className="text-[11px] font-bold text-slate-900 whitespace-nowrap">{row.nombreServicio}</span>
+                          </TableCell>
+                          <TableCell>
+                            <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">{row.cliente}</span>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="secondary" className="bg-slate-100 text-slate-900 text-[9px] font-bold border-none">
+                              ${row.precio.toFixed(2)}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right pr-6 md:pr-4">
+                            <span className="text-[10px] font-bold text-slate-400 tabular-nums whitespace-nowrap">
+                              {row.fecha.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
