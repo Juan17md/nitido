@@ -36,15 +36,13 @@ export function useFinanzasData(
 
     // Calcular Ingresos
     data.forEach((item) => {
-      const fecha = item.fecha?.toDate() || item.fechaEntrada?.toDate();
+      // Lavandería: ingreso al registrar el pedido (fecha de entrada); barbería: fecha de venta
+      const fecha = options.isLavanderia
+        ? item.fechaEntrada?.toDate()
+        : item.fecha?.toDate() || item.fechaEntrada?.toDate();
       if (!fecha) return;
 
       const valor = item.precio || 0;
-      
-      // Para lavandería, solo contamos los pedidos entregados como ingresos reales
-      if (options.isLavanderia && item.estado !== 'entregado') {
-        return; // Saltar pedidos no entregados
-      }
 
       if (isAfter(fecha, hoyStart)) hoy += valor;
       if (isAfter(fecha, semanaStart)) semana += valor;
@@ -69,10 +67,10 @@ export function useFinanzasData(
 
       const ingresosDia = data
         .filter(item => {
-          const f = item.fecha?.toDate() || item.fechaEntrada?.toDate();
+          const f = options.isLavanderia
+            ? item.fechaEntrada?.toDate()
+            : item.fecha?.toDate() || item.fechaEntrada?.toDate();
           if (!f || !(f >= dStart && f < dEnd)) return false;
-          // Para lavandería, solo entregados
-          if (options.isLavanderia && item.estado !== 'entregado') return false;
           return true;
         })
         .reduce((acc, curr) => acc + (curr.precio || 0), 0);

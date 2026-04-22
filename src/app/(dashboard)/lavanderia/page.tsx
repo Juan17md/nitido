@@ -61,9 +61,12 @@ export default function LavanderiaPage() {
     };
   }, []);
 
-  // Cálculos dinámicos
+  // Ingresos del mes: cobro al registrar (fecha de entrada del pedido)
+  const inicioMes = new Date();
+  inicioMes.setDate(1);
+  inicioMes.setHours(0, 0, 0, 0);
   const ingresosMensuales = pedidos
-    .filter(p => p.estado === 'entregado')
+    .filter((p) => p.fechaEntrada && p.fechaEntrada.toDate() >= inicioMes)
     .reduce((acc, curr) => acc + curr.precio, 0);
   
   const pedidosActivos = pedidos.filter(p => p.estado !== 'entregado').length;
@@ -117,7 +120,7 @@ export default function LavanderiaPage() {
           <StatCard
             title="Ingresos"
             value={`$${ingresosMensuales.toFixed(2)}`}
-            description="Mes (Entregados)"
+            description="Mes (al registrar)"
             icon={TrendingUp}
             trend={{ value: "+0%", positive: true }}
           />

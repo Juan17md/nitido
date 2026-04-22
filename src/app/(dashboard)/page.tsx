@@ -65,7 +65,7 @@ export default function DashboardPage() {
     .filter(s => s.fecha && s.fecha.toDate().getTime() >= hoy)
     .reduce((acc: number, curr: any) => acc + curr.precio, 0) + 
     datosLavanderia
-    .filter(p => p.fechaEntrada && p.fechaEntrada.toDate().getTime() >= hoy && p.estado === 'entregado')
+    .filter((p) => p.fechaEntrada && p.fechaEntrada.toDate().getTime() >= hoy)
     .reduce((acc: number, curr: any) => acc + curr.precio, 0);
   
   const stockBajo = inventario.filter(item => item.status === 'low').length;
