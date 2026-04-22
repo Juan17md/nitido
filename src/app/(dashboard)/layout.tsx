@@ -44,8 +44,17 @@ export default function DashboardLayout({
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden pb-20 md:pb-0">
         {/* Scrollable Content */}
-        <main className="flex-1 overflow-y-auto relative custom-scrollbar">
-          {children}
+        <main className="flex-1 overflow-y-auto relative custom-scrollbar flex flex-col">
+          <div className="flex-1">
+            {children}
+          </div>
+          
+          {/* Footer - Quiet Luxury */}
+          <footer className="w-full py-8 mt-auto flex justify-center items-center">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-medium">
+              designed by: <span className="text-slate-900 font-bold">Juan17md</span>
+            </p>
+          </footer>
         </main>
       </div>
 
