@@ -7,26 +7,26 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/dashboard/StatCard";
-import { subscribePedidosLavanderia, subscribeGastosLavanderia, registrarGastoLavanderia, eliminarGastoLavanderia, type PedidoLavanderia, type GastoLavanderia } from "@/lib/lavanderia-service";
+import { subscribeAlquileresLavanderia, subscribeGastosLavanderia, registrarGastoLavanderia, eliminarGastoLavanderia, type AlquilerLavanderia, type GastoLavanderia } from "@/lib/lavanderia-service";
 import { useFinanzasData } from "@/hooks/use-finanzas-data";
 import { FinanzasChart } from "@/components/dashboard/FinanzasChart";
 import { RegistrarGastoDialog } from "@/components/dashboard/RegistrarGastoDialog";
 import { toast } from "sonner";
 
 export default function LavanderiaFinanzasPage() {
-  const [pedidos, setPedidos] = useState<PedidoLavanderia[]>([]);
+  const [alquileres, setAlquileres] = useState<AlquilerLavanderia[]>([]);
   const [gastos, setGastos] = useState<GastoLavanderia[]>([]);
 
   useEffect(() => {
-    const unsubPedidos = subscribePedidosLavanderia(setPedidos);
+    const unsubAlquileres = subscribeAlquileresLavanderia(setAlquileres);
     const unsubGastos = subscribeGastosLavanderia(setGastos);
     return () => {
-      unsubPedidos();
+      unsubAlquileres();
       unsubGastos();
     };
   }, []);
 
-  const metrics = useFinanzasData(pedidos, gastos, { isLavanderia: true });
+  const metrics = useFinanzasData(alquileres, gastos, { isLavanderia: true });
 
   const handleDeleteGasto = async (id: string) => {
     if (confirm("¿Estás seguro de eliminar este gasto?")) {

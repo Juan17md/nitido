@@ -32,31 +32,31 @@ import Link from "next/link";
 // Firebase Services
 import { 
   subscribeServiciosLavanderia, 
-  subscribePedidosLavanderia, 
+  subscribeAlquileresLavanderia, 
   subscribeMaquinas,
   type ServicioLavanderia,
-  type PedidoLavanderia,
+  type AlquilerLavanderia,
   type Maquina
 } from "@/lib/lavanderia-service";
 
 // Components
-import { NuevoPedidoDialog } from "@/components/lavanderia/NuevoPedidoDialog";
+import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
 
 export default function LavanderiaPage() {
   // Estado real de datos
   const [servicios, setServicios] = useState<ServicioLavanderia[]>([]);
-  const [pedidos, setPedidos] = useState<PedidoLavanderia[]>([]);
+  const [alquileres, setAlquileres] = useState<AlquilerLavanderia[]>([]);
   const [maquinas, setMaquinas] = useState<Maquina[]>([]);
 
   // Suscripciones en tiempo real
   useEffect(() => {
     const unsubServicios = subscribeServiciosLavanderia(setServicios);
-    const unsubPedidos = subscribePedidosLavanderia(setPedidos);
+    const unsubAlquileres = subscribeAlquileresLavanderia(setAlquileres);
     const unsubMaquinas = subscribeMaquinas(setMaquinas);
 
     return () => {
       unsubServicios();
-      unsubPedidos();
+      unsubAlquileres();
       unsubMaquinas();
     };
   }, []);
@@ -65,11 +65,11 @@ export default function LavanderiaPage() {
   const inicioMes = new Date();
   inicioMes.setDate(1);
   inicioMes.setHours(0, 0, 0, 0);
-  const ingresosMensuales = pedidos
+  const ingresosMensuales = alquileres
     .filter((p) => p.fechaEntrada && p.fechaEntrada.toDate() >= inicioMes)
     .reduce((acc, curr) => acc + curr.precio, 0);
   
-  const pedidosActivos = pedidos.filter(p => p.estado !== 'entregado').length;
+  const alquileresActivos = alquileres.filter((p) => !p.fechaRecibida).length;
   const maquinasDisponibles = maquinas.filter(m => m.estado === 'disponible').length;
 
   return (
@@ -96,7 +96,7 @@ export default function LavanderiaPage() {
               </div>
             </div>
             <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Optimiza la gestión de pedidos, monitorea la disponibilidad de las máquinas y supervisa los ingresos de tu lavandería en tiempo real.
+              Optimiza la gestión de alquileres, monitorea la disponibilidad de las máquinas y supervisa los ingresos de tu lavandería en tiempo real.
             </p>
           </div>
         </div>
@@ -111,9 +111,9 @@ export default function LavanderiaPage() {
         {/* Stats Grid */}
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <StatCard
-            title="Pedidos"
-            value={pedidosActivos.toString()}
-            description="En proceso o listos"
+            title="Alquileres"
+            value={alquileresActivos.toString()}
+            description="Pendientes de recepción"
             icon={Clock}
             trend={{ value: "Pendientes", positive: true }}
           />
@@ -142,7 +142,7 @@ export default function LavanderiaPage() {
               <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Gestión operativa</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 grid gap-3">
-              <NuevoPedidoDialog servicios={servicios} />
+              <NuevoAlquilerDialog servicios={servicios} />
               <Link href="/lavanderia/maquinas">
                 <Button variant="outline" className="w-full h-11 border-slate-100 text-slate-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl hover:bg-slate-50 active:scale-95 transition-all shadow-sm">
                   <Settings className="mr-2 h-4 w-4 text-slate-400" />
@@ -153,11 +153,11 @@ export default function LavanderiaPage() {
             </CardContent>
           </Card>
 
-          {/* Recent Pedidos */}
+          {/* Alquileres recientes */}
           <Card className="md:col-span-2 border-slate-100 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div>
-                <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Pedidos Recientes</CardTitle>
+                <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Alquileres Recientes</CardTitle>
                 <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Seguimiento</CardDescription>
               </div>
               <Link href="/lavanderia/historial">
@@ -165,9 +165,9 @@ export default function LavanderiaPage() {
               </Link>
             </CardHeader>
             <CardContent className="px-0 md:px-6">
-              {pedidos.length === 0 ? (
+              {alquileres.length === 0 ? (
                 <div className="py-10 text-center px-6">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-300">No hay pedidos activos</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-300">No hay alquileres activos</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto scrollbar-hide">
@@ -176,12 +176,12 @@ export default function LavanderiaPage() {
                       <TableRow className="border-slate-50 hover:bg-transparent px-4">
                         <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 pl-6 md:pl-4 whitespace-nowrap">Cliente</TableHead>
                         <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Servicio</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Estado</TableHead>
+                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Recepción</TableHead>
                         <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right pr-6 md:pr-4 whitespace-nowrap">Monto</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {pedidos.slice(0, 5).map((row) => (
+                      {alquileres.slice(0, 5).map((row) => (
                         <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
                           <TableCell className="py-4 pl-6 md:pl-4">
                             <span className="text-[11px] font-bold text-slate-900 whitespace-nowrap">{row.cliente}</span>
@@ -190,17 +190,16 @@ export default function LavanderiaPage() {
                             <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">{row.nombreServicio}</span>
                           </TableCell>
                           <TableCell>
-                            <Badge 
-                              variant="secondary" 
+                            <Badge
+                              variant="secondary"
                               className={cn(
                                 "text-[8px] font-bold uppercase tracking-tighter whitespace-nowrap",
-                                row.estado === 'pendiente' && "bg-orange-50 text-orange-600 border-orange-100",
-                                row.estado === 'en_proceso' && "bg-blue-50 text-blue-600 border-blue-100",
-                                row.estado === 'listo' && "bg-green-50 text-green-600 border-green-100",
-                                row.estado === 'entregado' && "bg-slate-100 text-slate-500 border-slate-200",
+                                !row.fechaRecibida && "bg-orange-50 text-orange-600 border-orange-100",
+                                row.fechaRecibida && row.recepcionAutomatica && "bg-blue-50 text-blue-600 border-blue-100",
+                                row.fechaRecibida && !row.recepcionAutomatica && "bg-green-50 text-green-600 border-green-100"
                               )}
                             >
-                              {row.estado.replace('_', ' ')}
+                              {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right pr-6 md:pr-4">

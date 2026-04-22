@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 
 // Services
 import { subscribeHistorial as subBarberia } from "@/lib/barberia-service";
-import { subscribePedidosLavanderia as subLavanderia } from "@/lib/lavanderia-service";
+import { subscribeAlquileresLavanderia as subLavanderia } from "@/lib/lavanderia-service";
 
 export default function HistorialPage() {
   const [datosBarberia, setDatosBarberia] = useState<any[]>([]);

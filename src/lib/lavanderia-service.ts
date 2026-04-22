@@ -24,16 +24,18 @@ export interface ServicioLavanderia {
   createdAt: Timestamp;
 }
 
-export interface PedidoLavanderia {
+export interface AlquilerLavanderia {
   id?: string;
   cliente: string;
   servicioId: string;
   nombreServicio: string;
   precio: number;
-  estado: 'pendiente' | 'en_proceso' | 'listo' | 'entregado';
   fechaEntrada: Timestamp;
-  fechaEntregaEstimada?: Timestamp;
+  fechaRecibida?: Timestamp;
+  recepcionAutomatica?: boolean;
   maquinaId?: string;
+  // Compatibilidad temporal con datos antiguos
+  estado?: 'pendiente' | 'en_proceso' | 'listo' | 'entregado';
 }
 
 export interface Maquina {
@@ -84,62 +86,105 @@ export const actualizarServicioLavanderia = async (id: string, servicio: Partial
 
 // --- PEDIDOS ---
 
-export const subscribePedidosLavanderia = (callback: (pedidos: PedidoLavanderia[]) => void) => {
+export const subscribeAlquileresLavanderia = (callback: (alquileres: AlquilerLavanderia[]) => void) => {
   const q = query(collection(db, "lavanderia_pedidos"), orderBy("fechaEntrada", "desc"));
   return onSnapshot(q, (snapshot) => {
-    const pedidos = snapshot.docs.map(doc => ({
+    const alquileres = snapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
-    })) as PedidoLavanderia[];
-    callback(pedidos);
+    })) as AlquilerLavanderia[];
+
+    void autoRecibirAlquileresVencidos(alquileres);
+    callback(alquileres);
   }, (error) => {
     console.error("[Nítido] Error en suscripción de pedidos lavandería:", error);
   });
 };
 
-export const registrarPedido = async (pedido: Omit<PedidoLavanderia, "id" | "fechaEntrada" | "estado">) => {
-  const tieneMaquina = pedido.maquinaId && pedido.maquinaId.length > 0;
+export const registrarAlquiler = async (alquiler: Omit<AlquilerLavanderia, "id" | "fechaEntrada" | "fechaRecibida" | "recepcionAutomatica" | "estado">) => {
+  const tieneMaquina = alquiler.maquinaId && alquiler.maquinaId.length > 0;
 
-  // Registrar el pedido con estado condicional
-  const pedidoRef = await addDoc(collection(db, "lavanderia_pedidos"), {
-    ...pedido,
-    estado: tieneMaquina ? 'en_proceso' : 'pendiente',
+  // Registrar el pedido y cobrar al instante en finanzas por fechaEntrada
+  const alquilerRef = await addDoc(collection(db, "lavanderia_pedidos"), {
+    ...alquiler,
     fechaEntrada: Timestamp.now()
   });
 
   // Si se asignó una máquina, marcarla como ocupada
   if (tieneMaquina) {
-    await actualizarEstadoMaquina(pedido.maquinaId!, 'ocupada');
+    await actualizarEstadoMaquina(alquiler.maquinaId!, 'ocupada');
   }
 
-  return pedidoRef;
+  return alquilerRef;
 };
 
-export const actualizarEstadoPedido = async (id: string, nuevoEstado: PedidoLavanderia['estado'], maquinaId?: string) => {
+export const marcarAlquilerRecibido = async (id: string, maquinaId?: string, automatico = false) => {
+  const ref = doc(db, "lavanderia_pedidos", id);
+  const alquilerSnap = await getDoc(ref);
+  if (!alquilerSnap.exists()) return;
+
+  const alquilerData = alquilerSnap.data() as AlquilerLavanderia;
+  if (alquilerData.fechaRecibida) return;
+
+  await updateDoc(ref, {
+    fechaRecibida: Timestamp.now(),
+    recepcionAutomatica: automatico
+  });
+
+  const maquinaAsignada = maquinaId || alquilerData.maquinaId;
+  if (maquinaAsignada) {
+    await actualizarEstadoMaquina(maquinaAsignada, 'disponible');
+  }
+};
+
+const autoRecibirAlquileresVencidos = async (alquileres: AlquilerLavanderia[]) => {
+  const ahora = Date.now();
+  const veinticuatroHorasMs = 24 * 60 * 60 * 1000;
+
+  const alquileresVencidos = alquileres.filter((alquiler) => {
+    if (!alquiler.id || alquiler.fechaRecibida || !alquiler.fechaEntrada) return false;
+    const fechaEntradaMs = alquiler.fechaEntrada.toDate().getTime();
+    return ahora - fechaEntradaMs >= veinticuatroHorasMs;
+  });
+
+  if (alquileresVencidos.length === 0) return;
+
+  await Promise.all(
+    alquileresVencidos.map((alquiler) =>
+      marcarAlquilerRecibido(alquiler.id!, alquiler.maquinaId, true).catch((error) => {
+        console.error("[Nítido] Error en auto-recepción de alquiler:", error);
+      })
+    )
+  );
+};
+
+export const actualizarEstadoPedido = async (id: string, nuevoEstado: AlquilerLavanderia['estado'], maquinaId?: string) => {
+  if (nuevoEstado === 'entregado') {
+    await marcarAlquilerRecibido(id, maquinaId, false);
+    return;
+  }
+
+  // Mantener compatibilidad para datos antiguos mientras se simplifica la UI
   const ref = doc(db, "lavanderia_pedidos", id);
   await updateDoc(ref, { estado: nuevoEstado });
-
-  // Si el pedido se marca como entregado y tenía una máquina asignada, liberarla
-  if (nuevoEstado === 'entregado' && maquinaId) {
-    await actualizarEstadoMaquina(maquinaId, 'disponible');
-  }
 };
 
-export const eliminarPedido = async (id: string) => {
+export const eliminarAlquiler = async (id: string) => {
   // Leer el pedido antes de eliminarlo para liberar la máquina si aplica
   const pedidoRef = doc(db, "lavanderia_pedidos", id);
   const pedidoSnap = await getDoc(pedidoRef);
 
   if (pedidoSnap.exists()) {
-    const pedidoData = pedidoSnap.data() as PedidoLavanderia;
-    // Si el pedido tenía una máquina asignada y no estaba entregado, liberar la máquina
-    if (pedidoData.maquinaId && pedidoData.estado !== 'entregado') {
+    const pedidoData = pedidoSnap.data() as AlquilerLavanderia;
+    // Si tenía máquina y aún no fue recibido, liberar máquina al eliminar
+    if (pedidoData.maquinaId && !pedidoData.fechaRecibida) {
       await actualizarEstadoMaquina(pedidoData.maquinaId, 'disponible');
     }
   }
 
   return deleteDoc(pedidoRef);
 };
+
 
 // --- MÁQUINAS ---
 

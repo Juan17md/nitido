@@ -2,65 +2,75 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Waves, Search, Filter, Play, CheckCircle2, PackageCheck, Trash2 } from "lucide-react";
+import { Waves, Search, Filter, PackageCheck, Trash2, Clock3 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from "@/components/ui/table";
-
 import { cn } from "@/lib/utils";
-import { 
-  subscribePedidosLavanderia, 
+import {
+  subscribeAlquileresLavanderia,
   subscribeServiciosLavanderia,
-  type PedidoLavanderia, 
+  type AlquilerLavanderia,
   type ServicioLavanderia,
-  actualizarEstadoPedido,
-  eliminarPedido 
+  marcarAlquilerRecibido,
+  eliminarAlquiler
 } from "@/lib/lavanderia-service";
-import { NuevoPedidoDialog } from "@/components/lavanderia/NuevoPedidoDialog";
+import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
 import { toast } from "sonner";
 
 export default function LavanderiaHistorialPage() {
-  const [pedidos, setPedidos] = useState<PedidoLavanderia[]>([]);
+  const [alquileres, setAlquileres] = useState<AlquilerLavanderia[]>([]);
   const [servicios, setServicios] = useState<ServicioLavanderia[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    const unsubPedidos = subscribePedidosLavanderia(setPedidos);
+    const unsubAlquileres = subscribeAlquileresLavanderia(setAlquileres);
     const unsubServicios = subscribeServiciosLavanderia(setServicios);
     return () => {
-      unsubPedidos();
+      unsubAlquileres();
       unsubServicios();
     };
   }, []);
 
-  const filteredPedidos = pedidos.filter(row => 
+  const filteredAlquileres = alquileres.filter((row) =>
     row.cliente.toLowerCase().includes(search.toLowerCase()) ||
     row.nombreServicio.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleDelete = async (id: string) => {
-    if (confirm("¿Estás seguro de eliminar este pedido?")) {
+    if (confirm("¿Estás seguro de eliminar este alquiler?")) {
       try {
-        await eliminarPedido(id);
-        toast.success("Pedido eliminado");
+        await eliminarAlquiler(id);
+        toast.success("Alquiler eliminado");
       } catch (error) {
-        toast.error("Error al eliminar el pedido");
+        console.error(error);
+        toast.error("Error al eliminar el alquiler");
       }
+    }
+  };
+
+  const handleMarcarRecibida = async (row: AlquilerLavanderia) => {
+    if (!row.id || row.fechaRecibida) return;
+    try {
+      await marcarAlquilerRecibido(row.id, row.maquinaId, false);
+      toast.success("Alquiler marcado como recibido");
+    } catch (error) {
+      console.error(error);
+      toast.error("No se pudo marcar como recibido");
     }
   };
 
   return (
     <div className="expansive-container mx-auto py-8 md:py-12 px-4 md:px-0 space-y-10">
-      {/* Header Section */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10"
@@ -76,21 +86,20 @@ export default function LavanderiaHistorialPage() {
                   Lavandería
                 </Badge>
                 <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Historial de <span className="italic font-light text-slate-400">Pedidos</span>
+                  Historial de <span className="italic font-light text-slate-400">Alquileres</span>
                 </h2>
               </div>
             </div>
             <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Gestiona el flujo de trabajo de los pedidos activos y consulta el registro histórico de servicios entregados.
+              Consulta alquileres registrados, marca recepción manual y deja que el sistema cierre automáticamente a las 24h.
             </p>
           </div>
-          
+
           <div className="shrink-0">
-            <NuevoPedidoDialog servicios={servicios} />
+            <NuevoAlquilerDialog servicios={servicios} />
           </div>
         </div>
       </motion.div>
-
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -100,9 +109,9 @@ export default function LavanderiaHistorialPage() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Buscar por cliente o ticket..." 
+            <input
+              type="text"
+              placeholder="Buscar por cliente o ticket..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white border border-slate-100 text-[11px] font-medium focus:outline-none focus:ring-1 focus:ring-slate-200 transition-all shadow-sm"
@@ -116,41 +125,40 @@ export default function LavanderiaHistorialPage() {
           </div>
         </div>
 
-        {/* Vista Móvil (Tarjetas) */}
         <div className="grid gap-4 grid-cols-1 md:hidden">
-          {filteredPedidos.map((row) => (
+          {filteredAlquileres.map((row) => (
             <Card key={row.id} className="border-slate-100 shadow-sm p-4">
               <div className="flex justify-between items-start mb-3">
                 <div className="space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    Entrada: {row.fechaEntrada.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                    Entrada: {row.fechaEntrada.toDate().toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
                   </span>
                   <h4 className="text-sm font-bold text-slate-900 uppercase tracking-tight">{row.cliente}</h4>
                 </div>
-                <Badge 
-                  variant="outline" 
+                <Badge
+                  variant="outline"
                   className={cn(
                     "text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5",
-                    row.estado === 'pendiente' && "border-orange-200 text-orange-600 bg-orange-50/30",
-                    row.estado === 'en_proceso' && "border-blue-200 text-blue-600 bg-blue-50/30",
-                    row.estado === 'listo' && "border-green-200 text-green-600 bg-green-50/30",
-                    row.estado === 'entregado' && "border-slate-200 text-slate-400 bg-slate-50/30",
+                    !row.fechaRecibida && "border-orange-200 text-orange-600 bg-orange-50/30",
+                    row.fechaRecibida && row.recepcionAutomatica && "border-blue-200 text-blue-600 bg-blue-50/30",
+                    row.fechaRecibida && !row.recepcionAutomatica && "border-green-200 text-green-600 bg-green-50/30"
                   )}
                 >
-                  {row.estado.replace('_', ' ')}
+                  {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
                 </Badge>
               </div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{row.nombreServicio} • ${row.precio.toFixed(2)}</span>
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-blue-500 hover:bg-blue-50" onClick={() => actualizarEstadoPedido(row.id!, 'en_proceso', row.maquinaId)} title="En Proceso">
-                    <Play className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-green-500 hover:bg-green-50" onClick={() => actualizarEstadoPedido(row.id!, 'listo', row.maquinaId)} title="Listo">
-                    <CheckCircle2 className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-slate-900 hover:bg-slate-100" onClick={() => actualizarEstadoPedido(row.id!, 'entregado', row.maquinaId)} title="Entregado">
-                    <PackageCheck className="h-4 w-4" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-slate-400 hover:text-green-500 hover:bg-green-50"
+                    onClick={() => handleMarcarRecibida(row)}
+                    title="Marcar recibida"
+                    disabled={Boolean(row.fechaRecibida)}
+                  >
+                    {row.fechaRecibida ? <Clock3 className="h-4 w-4" /> : <PackageCheck className="h-4 w-4" />}
                   </Button>
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50" onClick={() => handleDelete(row.id!)} title="Eliminar">
                     <Trash2 className="h-4 w-4" />
@@ -159,14 +167,13 @@ export default function LavanderiaHistorialPage() {
               </div>
             </Card>
           ))}
-          {filteredPedidos.length === 0 && (
+          {filteredAlquileres.length === 0 && (
             <div className="py-20 text-center rounded-3xl border border-dashed border-slate-200 px-6">
-               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sin pedidos encontrados</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sin alquileres encontrados</p>
             </div>
           )}
         </div>
 
-        {/* Vista Escritorio (Tabla) */}
         <div className="hidden md:block">
           <Card className="border-slate-100 shadow-sm overflow-hidden">
             <Table>
@@ -175,42 +182,42 @@ export default function LavanderiaHistorialPage() {
                   <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 py-4">Entrada</TableHead>
                   <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Cliente</TableHead>
                   <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Servicio</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Estado</TableHead>
+                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Recepción</TableHead>
                   <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredPedidos.map((row) => (
+                {filteredAlquileres.map((row) => (
                   <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
                     <TableCell className="py-4 text-[10px] font-medium text-slate-400 tabular-nums">
-                      {row.fechaEntrada.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
+                      {row.fechaEntrada.toDate().toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
                     </TableCell>
                     <TableCell className="text-[11px] font-bold text-slate-900">{row.cliente}</TableCell>
                     <TableCell className="text-[10px] font-medium text-slate-400">{row.nombreServicio}</TableCell>
                     <TableCell>
-                      <Badge 
-                        variant="outline" 
+                      <Badge
+                        variant="outline"
                         className={cn(
                           "text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5",
-                          row.estado === 'pendiente' && "border-orange-200 text-orange-600 bg-orange-50/30",
-                          row.estado === 'en_proceso' && "border-blue-200 text-blue-600 bg-blue-50/30",
-                          row.estado === 'listo' && "border-green-200 text-green-600 bg-green-50/30",
-                          row.estado === 'entregado' && "border-slate-200 text-slate-400 bg-slate-50/30",
+                          !row.fechaRecibida && "border-orange-200 text-orange-600 bg-orange-50/30",
+                          row.fechaRecibida && row.recepcionAutomatica && "border-blue-200 text-blue-600 bg-blue-50/30",
+                          row.fechaRecibida && !row.recepcionAutomatica && "border-green-200 text-green-600 bg-green-50/30"
                         )}
                       >
-                        {row.estado.replace('_', ' ')}
+                        {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end items-center gap-1">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 md:hover:text-blue-500 md:hover:bg-blue-50 transition-colors" onClick={() => actualizarEstadoPedido(row.id!, 'en_proceso', row.maquinaId)} title="En Proceso">
-                          <Play className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 md:hover:text-green-500 md:hover:bg-green-50 transition-colors" onClick={() => actualizarEstadoPedido(row.id!, 'listo', row.maquinaId)} title="Listo">
-                          <CheckCircle2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 md:hover:text-slate-900 md:hover:bg-slate-100 transition-colors" onClick={() => actualizarEstadoPedido(row.id!, 'entregado', row.maquinaId)} title="Entregado">
-                          <PackageCheck className="h-4 w-4" />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-slate-400 md:hover:text-green-500 md:hover:bg-green-50 transition-colors"
+                          onClick={() => handleMarcarRecibida(row)}
+                          title="Marcar recibida"
+                          disabled={Boolean(row.fechaRecibida)}
+                        >
+                          {row.fechaRecibida ? <Clock3 className="h-4 w-4" /> : <PackageCheck className="h-4 w-4" />}
                         </Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 md:hover:text-red-500 md:hover:bg-red-50 transition-colors" onClick={() => handleDelete(row.id!)} title="Eliminar">
                           <Trash2 className="h-4 w-4" />
@@ -219,10 +226,10 @@ export default function LavanderiaHistorialPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {filteredPedidos.length === 0 && (
+                {filteredAlquileres.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={5} className="py-10 text-center text-[10px] font-bold uppercase tracking-widest text-slate-300">
-                      Sin pedidos encontrados
+                      Sin alquileres encontrados
                     </TableCell>
                   </TableRow>
                 )}

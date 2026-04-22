@@ -24,11 +24,11 @@ import { useRouter } from "next/navigation";
 
 // Components
 import { RegistrarVentaDialog } from "@/components/barberia/RegistrarVentaDialog";
-import { NuevoPedidoDialog } from "@/components/lavanderia/NuevoPedidoDialog";
+import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
 
 // Services
 import { subscribeHistorial as subBarberia, subscribeInventario, subscribeServicios as subServiciosBarberia } from "@/lib/barberia-service";
-import { subscribePedidosLavanderia as subLavanderia, subscribeMaquinas, subscribeServiciosLavanderia as subServiciosLavanderia } from "@/lib/lavanderia-service";
+import { subscribeAlquileresLavanderia as subLavanderia, subscribeMaquinas, subscribeServiciosLavanderia as subServiciosLavanderia } from "@/lib/lavanderia-service";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -70,7 +70,7 @@ export default function DashboardPage() {
   
   const stockBajo = inventario.filter(item => item.status === 'low').length;
   const maquinasOcupadas = maquinas.filter(m => m.estado === 'ocupada').length;
-  const pedidosPendientes = datosLavanderia.filter(p => p.estado !== 'entregado').length;
+  const pedidosPendientes = datosLavanderia.filter((p) => !p.fechaRecibida).length;
 
   return (
     <div className="expansive-container mx-auto py-6 md:py-12 px-6 md:px-0 space-y-6 md:space-y-16">
@@ -127,7 +127,7 @@ export default function DashboardPage() {
         className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-3"
       >
         <RegistrarVentaDialog servicios={serviciosBarberia} />
-        <NuevoPedidoDialog servicios={serviciosLavanderia} />
+        <NuevoAlquilerDialog servicios={serviciosLavanderia} />
       </motion.section>
 
       {/* Stats Grid */}
