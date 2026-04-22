@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
 import { 
   History, 
   Search, 
@@ -75,16 +74,10 @@ export default function HistorialPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white shadow-sm">
                 <History className="h-5 w-5" />
               </div>
-              <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest text-slate-400 border-slate-100">
-                Módulo Historial
-              </Badge>
+              <h2 className="text-[2rem] leading-[1.05] md:text-3xl font-semibold tracking-[-0.02em] text-slate-900 md:uppercase">
+                Registro <span className="italic font-light text-slate-400">histórico</span>
+              </h2>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 uppercase">
-              Registro <span className="italic font-light text-slate-400">Histórico</span>
-            </h2>
-            <p className="text-[10px] md:text-xs font-medium text-slate-400 max-w-md uppercase tracking-wider leading-relaxed">
-              Consulta consolidada de todas las operaciones realizadas en el ecosistema Nítido.
-            </p>
           </div>
         </div>
       </motion.div>
@@ -118,7 +111,7 @@ export default function HistorialPage() {
                   <span className="text-[10px] font-bold text-slate-900 tabular-nums">
                     {item.fechaOriginal.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
-                  <span className="text-[9px] font-medium text-slate-400 tabular-nums">
+                  <span className="text-[10px] font-medium text-slate-600 tabular-nums">
                     {item.fechaOriginal.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
@@ -127,7 +120,7 @@ export default function HistorialPage() {
                   item.tipoModulo === 'barberia' ? "bg-slate-50 border-slate-200 text-slate-900" : "bg-blue-50 border-blue-100 text-blue-600"
                 )}>
                   {item.tipoModulo === 'barberia' ? <Scissors size={10} /> : <Waves size={10} />}
-                  <span className="text-[8px] font-bold uppercase tracking-widest">{item.tipoModulo}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.1em]">{item.tipoModulo}</span>
                 </div>
               </div>
               
@@ -139,7 +132,7 @@ export default function HistorialPage() {
               </div>
 
               <div className="flex justify-end mt-4">
-                 <Button variant="ghost" size="sm" className="h-8 text-[9px] font-bold uppercase tracking-widest text-slate-400">
+                 <Button variant="ghost" size="sm" className="h-9 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500 md:h-8">
                     Detalles <ArrowUpRight className="ml-1.5 h-3 w-3" />
                  </Button>
               </div>
@@ -147,7 +140,7 @@ export default function HistorialPage() {
           ))}
           {filtrados.length === 0 && (
             <div className="py-20 text-center rounded-3xl border border-dashed border-slate-200 px-6">
-               <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sin registros históricos</p>
+               <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Sin registros históricos</p>
             </div>
           )}
         </div>
@@ -158,12 +151,12 @@ export default function HistorialPage() {
             <Table>
               <TableHeader className="bg-slate-50/50">
                 <TableRow className="border-slate-100 hover:bg-transparent">
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 py-4">Fecha & Hora</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Módulo</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Servicio</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Cliente</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Monto</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right">Detalles</TableHead>
+                  <TableHead className="py-4 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Fecha & Hora</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Módulo</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Servicio</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Cliente</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Monto</TableHead>
+                  <TableHead className="text-right text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Detalles</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -174,7 +167,7 @@ export default function HistorialPage() {
                         <span className="text-[11px] font-bold text-slate-900 tabular-nums">
                           {item.fechaOriginal.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </span>
-                        <span className="text-[9px] font-medium text-slate-400 tabular-nums">
+                        <span className="text-[10px] font-medium text-slate-600 tabular-nums">
                           {item.fechaOriginal.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
@@ -187,16 +180,16 @@ export default function HistorialPage() {
                         )}>
                           {item.tipoModulo === 'barberia' ? <Scissors size={12} /> : <Waves size={12} />}
                         </div>
-                        <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400">{item.tipoModulo}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{item.tipoModulo}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-[11px] font-bold text-slate-900">{item.nombreServicio}</TableCell>
-                    <TableCell className="text-[10px] font-medium text-slate-400">{item.cliente}</TableCell>
+                    <TableCell className="text-[11px] font-medium text-slate-600">{item.cliente}</TableCell>
                     <TableCell>
                       <span className="text-[11px] font-bold text-slate-900 tabular-nums">${item.precio.toFixed(2)}</span>
                     </TableCell>
                     <TableCell className="text-right">
-                       <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-300 md:hover:text-slate-900">
+                       <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 md:h-8 md:w-8 md:hover:text-slate-900">
                           <ArrowUpRight className="h-4 w-4" />
                        </Button>
                     </TableCell>
@@ -205,7 +198,7 @@ export default function HistorialPage() {
                 {filtrados.length === 0 && (
                   <TableRow>
                     <TableCell colSpan={6} className="py-20 text-center">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-300">Sin registros históricos</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Sin registros históricos</p>
                     </TableCell>
                   </TableRow>
                 )}

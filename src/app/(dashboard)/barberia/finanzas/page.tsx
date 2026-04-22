@@ -53,18 +53,10 @@ export default function BarberiaFinanzasPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-200 transition-transform hover:rotate-3">
                 <DollarSign className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400 border-slate-100 px-2 py-0.5 bg-white mb-1">
-                  Barbería
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Control <span className="italic font-light text-slate-400">Financiero</span>
-                </h2>
-              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                Control <span className="italic font-light text-slate-400">Financiero</span>
+              </h2>
             </div>
-            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Visualiza el rendimiento económico de tu barbería con métricas precisas de ingresos, gastos y rentabilidad.
-            </p>
           </div>
 
           <RegistrarGastoDialog onSave={registrarGasto} variant="barberia" />
@@ -72,7 +64,7 @@ export default function BarberiaFinanzasPage() {
       </motion.div>
 
 
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+      <div className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-4">
         <StatCard
           title="Ingresos Hoy"
           value={`$${metrics.hoy.toFixed(2)}`}
@@ -104,16 +96,16 @@ export default function BarberiaFinanzasPage() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-7">
             <div className="space-y-1">
               <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Análisis de Rendimiento</CardTitle>
-              <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Flujo de caja - Últimos 7 días</CardDescription>
+              <CardDescription className="text-[10px] font-medium uppercase tracking-[0.1em] text-slate-500">Flujo de caja - Últimos 7 días</CardDescription>
             </div>
             <div className="flex items-center gap-4">
                <div className="flex items-center gap-1.5">
                  <div className="h-2 w-2 rounded-full bg-slate-900" />
-                 <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">Ingresos</span>
+                 <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Ingresos</span>
                </div>
                <div className="flex items-center gap-1.5">
                  <div className="h-2 w-2 rounded-full bg-slate-200" />
-                 <span className="text-[8px] font-bold uppercase tracking-widest text-slate-400">Gastos</span>
+                 <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Gastos</span>
                </div>
             </div>
           </CardHeader>
@@ -125,7 +117,7 @@ export default function BarberiaFinanzasPage() {
         <Card className="border-slate-100 shadow-sm overflow-hidden flex flex-col">
           <CardHeader className="pb-4">
             <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Gastos Recientes</CardTitle>
-            <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Últimos egresos registrados</CardDescription>
+            <CardDescription className="text-[10px] font-medium uppercase tracking-[0.1em] text-slate-500">Últimos egresos registrados</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 overflow-auto p-0">
              <div className="divide-y divide-slate-50">
@@ -134,9 +126,9 @@ export default function BarberiaFinanzasPage() {
                    <div className="space-y-1">
                      <p className="text-[11px] font-bold text-slate-900 uppercase tracking-tight">{gasto.descripcion}</p>
                      <div className="flex items-center gap-2">
-                       <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{gasto.categoria}</span>
-                       <span className="text-[8px] text-slate-300">•</span>
-                       <span className="text-[9px] font-medium text-slate-400 uppercase tabular-nums">
+                       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">{gasto.categoria}</span>
+                       <span className="text-[10px] text-slate-400">•</span>
+                       <span className="text-[10px] font-medium uppercase tabular-nums text-slate-600">
                          {gasto.fecha.toDate().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })}
                        </span>
                      </div>
@@ -145,7 +137,7 @@ export default function BarberiaFinanzasPage() {
                      <span className="text-[11px] font-bold text-red-500 tabular-nums">-${gasto.monto.toFixed(2)}</span>
                      <button 
                         onClick={() => handleDeleteGasto(gasto.id!)}
-                        className="opacity-0 group-hover:opacity-100 h-7 w-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-red-400 transition-all"
+                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 h-7 w-7 flex items-center justify-center rounded-lg hover:bg-red-50 text-red-400 transition-all"
                      >
                        <Trash2 className="h-3.5 w-3.5" />
                      </button>
@@ -154,7 +146,7 @@ export default function BarberiaFinanzasPage() {
                ))}
                {gastos.length === 0 && (
                  <div className="py-20 text-center">
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-slate-300">No hay gastos registrados</p>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">No hay gastos registrados</p>
                  </div>
                )}
              </div>

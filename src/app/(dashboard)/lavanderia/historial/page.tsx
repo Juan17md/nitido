@@ -81,18 +81,10 @@ export default function LavanderiaHistorialPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-900 text-white shadow-xl shadow-blue-100 transition-transform hover:rotate-3">
                 <Waves className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-blue-400 border-blue-100 px-2 py-0.5 bg-white mb-1">
-                  Lavandería
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Historial de <span className="italic font-light text-slate-400">Alquileres</span>
-                </h2>
-              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                Historial de <span className="italic font-light text-slate-400">Alquileres</span>
+              </h2>
             </div>
-            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Consulta alquileres registrados, marca recepción manual y deja que el sistema cierre automáticamente a las 24h.
-            </p>
           </div>
 
           <div className="shrink-0">
@@ -118,7 +110,7 @@ export default function LavanderiaHistorialPage() {
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 lg:pb-0">
-            <Button variant="outline" size="sm" className="h-9 rounded-xl border-slate-100 text-[10px] font-bold uppercase tracking-widest text-slate-600 shrink-0">
+            <Button variant="outline" size="sm" className="h-10 rounded-xl border-slate-100 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-600 shrink-0 md:h-9">
               <Filter className="mr-2 h-3.5 w-3.5" />
               Filtrar
             </Button>
@@ -130,7 +122,7 @@ export default function LavanderiaHistorialPage() {
             <Card key={row.id} className="border-slate-100 shadow-sm p-4">
               <div className="flex justify-between items-start mb-3">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-slate-600">
                     Entrada: {row.fechaEntrada.toDate().toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
                   </span>
                   <h4 className="text-sm font-bold text-slate-900 uppercase tracking-tight">{row.cliente}</h4>
@@ -138,7 +130,7 @@ export default function LavanderiaHistorialPage() {
                 <Badge
                   variant="outline"
                   className={cn(
-                    "text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5",
+                    "px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em]",
                     !row.fechaRecibida && "border-orange-200 text-orange-600 bg-orange-50/30",
                     row.fechaRecibida && row.recepcionAutomatica && "border-blue-200 text-blue-600 bg-blue-50/30",
                     row.fechaRecibida && !row.recepcionAutomatica && "border-green-200 text-green-600 bg-green-50/30"
@@ -153,14 +145,14 @@ export default function LavanderiaHistorialPage() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-slate-400 hover:text-green-500 hover:bg-green-50"
+                    className="h-9 w-9 text-slate-400 hover:bg-green-50 hover:text-green-500 md:h-8 md:w-8"
                     onClick={() => handleMarcarRecibida(row)}
                     title="Marcar recibida"
                     disabled={Boolean(row.fechaRecibida)}
                   >
                     {row.fechaRecibida ? <Clock3 className="h-4 w-4" /> : <PackageCheck className="h-4 w-4" />}
                   </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                  <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:bg-red-50 hover:text-red-500 md:h-8 md:w-8" onClick={() => handleDelete(row.id!)} title="Eliminar">
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -169,7 +161,7 @@ export default function LavanderiaHistorialPage() {
           ))}
           {filteredAlquileres.length === 0 && (
             <div className="py-20 text-center rounded-3xl border border-dashed border-slate-200 px-6">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sin alquileres encontrados</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Sin alquileres encontrados</p>
             </div>
           )}
         </div>
@@ -179,26 +171,26 @@ export default function LavanderiaHistorialPage() {
             <Table>
               <TableHeader className="bg-slate-50/50">
                 <TableRow className="border-slate-100 hover:bg-transparent">
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 py-4">Entrada</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Cliente</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Servicio</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Recepción</TableHead>
-                  <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right">Acciones</TableHead>
+                  <TableHead className="py-4 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Entrada</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Cliente</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Servicio</TableHead>
+                  <TableHead className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Recepción</TableHead>
+                  <TableHead className="text-right text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredAlquileres.map((row) => (
                   <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
-                    <TableCell className="py-4 text-[10px] font-medium text-slate-400 tabular-nums">
+                    <TableCell className="py-4 text-[11px] font-medium text-slate-600 tabular-nums">
                       {row.fechaEntrada.toDate().toLocaleDateString("es-ES", { day: "2-digit", month: "short" })}
                     </TableCell>
                     <TableCell className="text-[11px] font-bold text-slate-900">{row.cliente}</TableCell>
-                    <TableCell className="text-[10px] font-medium text-slate-400">{row.nombreServicio}</TableCell>
+                    <TableCell className="text-[11px] font-medium text-slate-600">{row.nombreServicio}</TableCell>
                     <TableCell>
                       <Badge
                         variant="outline"
                         className={cn(
-                          "text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5",
+                          "px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em]",
                           !row.fechaRecibida && "border-orange-200 text-orange-600 bg-orange-50/30",
                           row.fechaRecibida && row.recepcionAutomatica && "border-blue-200 text-blue-600 bg-blue-50/30",
                           row.fechaRecibida && !row.recepcionAutomatica && "border-green-200 text-green-600 bg-green-50/30"
@@ -212,14 +204,14 @@ export default function LavanderiaHistorialPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-slate-400 md:hover:text-green-500 md:hover:bg-green-50 transition-colors"
+                          className="h-9 w-9 text-slate-400 transition-colors md:h-8 md:w-8 md:hover:bg-green-50 md:hover:text-green-500"
                           onClick={() => handleMarcarRecibida(row)}
                           title="Marcar recibida"
                           disabled={Boolean(row.fechaRecibida)}
                         >
                           {row.fechaRecibida ? <Clock3 className="h-4 w-4" /> : <PackageCheck className="h-4 w-4" />}
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 md:hover:text-red-500 md:hover:bg-red-50 transition-colors" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                        <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 transition-colors md:h-8 md:w-8 md:hover:bg-red-50 md:hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -228,7 +220,7 @@ export default function LavanderiaHistorialPage() {
                 ))}
                 {filteredAlquileres.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={5} className="py-10 text-center text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                    <TableCell colSpan={5} className="py-10 text-center text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
                       Sin alquileres encontrados
                     </TableCell>
                   </TableRow>

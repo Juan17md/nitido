@@ -79,22 +79,24 @@ export function NuevoAlquilerDialog({ servicios }: Props) {
         Registrar Alquiler
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px] rounded-[32px] border-slate-100 p-8 shadow-2xl">
+      <DialogContent className="w-[calc(100vw-1.25rem)] max-w-[425px] max-h-[85vh] overflow-y-auto rounded-[26px] border-slate-100 p-4 shadow-2xl sm:max-h-[90vh] sm:rounded-[32px] sm:p-8">
         <DialogHeader>
-          <div className="h-12 w-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-4">
-            <Waves className="h-6 w-6" />
+          <div className="mb-2 flex items-center gap-3 sm:mb-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 sm:h-12 sm:w-12">
+              <Waves className="h-5 w-5 sm:h-6 sm:w-6" />
+            </div>
+            <DialogTitle className="text-base font-bold tracking-tight text-slate-900 uppercase sm:text-xl">Registrar Alquiler</DialogTitle>
           </div>
-          <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 uppercase">Registrar Alquiler</DialogTitle>
-          <DialogDescription className="text-[10px] font-medium text-slate-400 uppercase tracking-widest leading-relaxed pt-2">
-            Configura los parámetros del servicio y asigna recursos operativos.
+          <DialogDescription className="pt-1 text-[9px] font-medium leading-relaxed text-slate-400 uppercase tracking-[0.18em] sm:pt-2 sm:text-[10px] sm:tracking-widest">
+            Elige servicio, máquina y cliente.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 pt-4">
-          <div className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-2 sm:space-y-6 sm:pt-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="grid gap-2">
-              <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Servicio de Lavandería</Label>
+              <Label className="ml-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-400 sm:text-[10px] sm:tracking-widest">Servicio de Lavandería</Label>
               <Select value={selectedServicioId} onValueChange={(value) => setSelectedServicioId(value ?? "")}>
-                <SelectTrigger className="h-12 rounded-2xl border-transparent bg-slate-50 text-[11px] font-bold uppercase tracking-tight focus:bg-white transition-all">
+                <SelectTrigger className="h-11 rounded-2xl border-transparent bg-slate-50 text-[12px] font-bold uppercase tracking-tight transition-all focus:bg-white sm:h-12 sm:text-[11px]">
                   <SelectValue placeholder="SELECCIONAR SERVICIO...">
                     {(val: string) => {
                       if (!val) return "SELECCIONAR SERVICIO...";
@@ -114,9 +116,9 @@ export function NuevoAlquilerDialog({ servicios }: Props) {
             </div>
 
             <div className="grid gap-2">
-              <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Asignar Máquina (Opcional)</Label>
+              <Label className="ml-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-400 sm:text-[10px] sm:tracking-widest">Asignar Máquina (Opcional)</Label>
               <Select value={selectedMaquinaId} onValueChange={(value) => setSelectedMaquinaId(value ?? "ninguna")}>
-                <SelectTrigger className="h-12 rounded-2xl border-transparent bg-slate-50 text-[11px] font-bold uppercase tracking-tight focus:bg-white transition-all">
+                <SelectTrigger className="h-11 rounded-2xl border-transparent bg-slate-50 text-[12px] font-bold uppercase tracking-tight transition-all focus:bg-white sm:h-12 sm:text-[11px]">
                   <div className="flex items-center gap-2">
                     <Settings className="h-3.5 w-3.5 text-slate-400" />
                     <SelectValue placeholder="SIN ASIGNAR...">
@@ -145,22 +147,22 @@ export function NuevoAlquilerDialog({ servicios }: Props) {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="cliente" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 ml-1">Nombre del Cliente</Label>
+              <Label htmlFor="cliente" className="ml-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-400 sm:text-[10px] sm:tracking-widest">Nombre del Cliente</Label>
               <Input
                 id="cliente"
                 placeholder="CLIENTE"
                 value={cliente}
                 onChange={(e) => setCliente(e.target.value.toUpperCase())}
-                className="h-12 rounded-2xl border-transparent bg-slate-50 focus:bg-white transition-all text-[11px] font-bold uppercase tracking-tight px-4"
+                className="h-11 rounded-2xl border-transparent bg-slate-50 px-3 text-[12px] font-bold uppercase tracking-tight transition-all focus:bg-white sm:h-12 sm:px-4 sm:text-[11px]"
                 required
               />
             </div>
           </div>
-          <DialogFooter className="pt-4">
+          <DialogFooter className="sticky bottom-0 -mx-4 border-t border-slate-100 bg-white/95 px-4 pt-3 pb-1 backdrop-blur sm:static sm:mx-0 sm:border-t-0 sm:bg-transparent sm:p-0 sm:pt-4">
             <Button
               type="submit"
               disabled={loading || !selectedServicioId}
-              className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-[10px] font-bold uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-slate-200 transition-all active:scale-[0.98]"
+              className="h-12 w-full rounded-2xl bg-slate-900 text-[9px] font-bold uppercase tracking-[0.16em] shadow-xl shadow-slate-200 transition-all active:scale-[0.98] hover:bg-slate-800 sm:h-14 sm:text-[10px] sm:tracking-[0.2em]"
             >
               {loading ? "Procesando..." : "Confirmar Alquiler"}
             </Button>

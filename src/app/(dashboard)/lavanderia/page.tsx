@@ -86,18 +86,10 @@ export default function LavanderiaPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-900 text-white shadow-xl shadow-blue-100 transition-transform hover:rotate-3">
                 <Waves className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-blue-400 border-blue-100 px-2 py-0.5 bg-white mb-1">
-                  Módulo Lavandería
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Panel de <span className="italic font-light text-slate-400">Control</span>
-                </h2>
-              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                Panel de <span className="italic font-light text-slate-400">Control</span>
+              </h2>
             </div>
-            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Optimiza la gestión de alquileres, monitorea la disponibilidad de las máquinas y supervisa los ingresos de tu lavandería en tiempo real.
-            </p>
           </div>
         </div>
       </motion.div>
@@ -109,7 +101,7 @@ export default function LavanderiaPage() {
         className="space-y-6 md:space-y-8"
       >
         {/* Stats Grid */}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3">
           <StatCard
             title="Alquileres"
             value={alquileresActivos.toString()}
@@ -130,7 +122,7 @@ export default function LavanderiaPage() {
             description="Disponibles"
             icon={Settings}
             trend={{ value: "Estado OK", positive: true }}
-            className="sm:col-span-2 md:col-span-1"
+            className="col-span-2 md:col-span-1"
           />
         </div>
 
@@ -139,7 +131,7 @@ export default function LavanderiaPage() {
           <Card className="md:col-span-1 border-slate-100 shadow-sm overflow-hidden flex flex-col">
             <CardHeader className="bg-slate-50/50 pb-4">
               <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Acciones Rápidas</CardTitle>
-              <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Gestión operativa</CardDescription>
+              <CardDescription className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">Gestión operativa</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 grid gap-3">
               <NuevoAlquilerDialog servicios={servicios} />
@@ -158,59 +150,92 @@ export default function LavanderiaPage() {
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div>
                 <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Alquileres Recientes</CardTitle>
-                <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Seguimiento</CardDescription>
+                <CardDescription className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">Seguimiento</CardDescription>
               </div>
               <Link href="/lavanderia/historial">
-                <Button variant="ghost" size="sm" className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Ver Todos</Button>
+                <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Ver Todos</Button>
               </Link>
             </CardHeader>
             <CardContent className="px-0 md:px-6">
               {alquileres.length === 0 ? (
                 <div className="py-10 text-center px-6">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-300">No hay alquileres activos</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">No hay alquileres activos</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto scrollbar-hide">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-slate-50 hover:bg-transparent px-4">
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 pl-6 md:pl-4 whitespace-nowrap">Cliente</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Servicio</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Recepción</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right pr-6 md:pr-4 whitespace-nowrap">Monto</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {alquileres.slice(0, 5).map((row) => (
-                        <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
-                          <TableCell className="py-4 pl-6 md:pl-4">
-                            <span className="text-[11px] font-bold text-slate-900 whitespace-nowrap">{row.cliente}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">{row.nombreServicio}</span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="secondary"
-                              className={cn(
-                                "text-[8px] font-bold uppercase tracking-tighter whitespace-nowrap",
-                                !row.fechaRecibida && "bg-orange-50 text-orange-600 border-orange-100",
-                                row.fechaRecibida && row.recepcionAutomatica && "bg-blue-50 text-blue-600 border-blue-100",
-                                row.fechaRecibida && !row.recepcionAutomatica && "bg-green-50 text-green-600 border-green-100"
-                              )}
-                            >
-                              {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right pr-6 md:pr-4">
-                            <span className="text-[11px] font-bold text-slate-900 tabular-nums whitespace-nowrap">
-                              ${row.precio.toFixed(2)}
-                            </span>
-                          </TableCell>
+                <div className="space-y-1">
+                  {/* Vista Móvil */}
+                  <div className="md:hidden divide-y divide-slate-50">
+                    {alquileres.slice(0, 5).map((row) => (
+                      <div key={row.id} className="p-4 flex flex-col gap-2">
+                        <div className="flex justify-between items-start">
+                          <div className="flex flex-col gap-0.5">
+                            <span className="text-[11px] font-bold text-slate-900 uppercase tracking-tight">{row.cliente}</span>
+                            <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{row.nombreServicio}</span>
+                          </div>
+                          <span className="text-[11px] font-bold text-slate-900 tabular-nums">
+                            ${row.precio.toFixed(2)}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <Badge
+                            variant="secondary"
+                            className={cn(
+                              "text-[9px] font-bold uppercase tracking-[0.08em] px-2 py-0.5",
+                              !row.fechaRecibida && "bg-orange-50 text-orange-600 border-none",
+                              row.fechaRecibida && row.recepcionAutomatica && "bg-blue-50 text-blue-600 border-none",
+                              row.fechaRecibida && !row.recepcionAutomatica && "bg-green-50 text-green-600 border-none"
+                            )}
+                          >
+                            {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Vista Escritorio */}
+                  <div className="hidden md:block overflow-x-auto scrollbar-hide">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-slate-50 hover:bg-transparent px-4">
+                          <TableHead className="whitespace-nowrap pl-6 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pl-4">Cliente</TableHead>
+                          <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Servicio</TableHead>
+                          <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Recepción</TableHead>
+                          <TableHead className="whitespace-nowrap pr-6 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pr-4">Monto</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {alquileres.slice(0, 5).map((row) => (
+                          <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
+                            <TableCell className="py-4 pl-6 md:pl-4">
+                              <span className="text-[11px] font-bold text-slate-900 whitespace-nowrap">{row.cliente}</span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="whitespace-nowrap text-[11px] font-medium text-slate-600">{row.nombreServicio}</span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge
+                                variant="secondary"
+                                className={cn(
+                                  "whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.08em]",
+                                  !row.fechaRecibida && "bg-orange-50 text-orange-600 border-orange-100",
+                                  row.fechaRecibida && row.recepcionAutomatica && "bg-blue-50 text-blue-600 border-blue-100",
+                                  row.fechaRecibida && !row.recepcionAutomatica && "bg-green-50 text-green-600 border-green-100"
+                                )}
+                              >
+                                {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right pr-6 md:pr-4">
+                              <span className="text-[11px] font-bold text-slate-900 tabular-nums whitespace-nowrap">
+                                ${row.precio.toFixed(2)}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -231,16 +256,16 @@ function StatCard({ title, value, description, icon: Icon, trend, className }: a
             <Icon className="h-4 w-4 md:h-5 md:w-5" />
           </div>
           <div className={cn(
-            "text-[8px] md:text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 md:py-1 rounded-lg border",
+            "rounded-lg border px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] md:py-1 md:text-[11px]",
             trend.positive ? "text-green-600 bg-green-50 border-green-100" : "text-slate-400 bg-slate-50 border-slate-100"
           )}>
             {trend.value}
           </div>
         </div>
         <div className="space-y-1">
-          <h4 className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">{title}</h4>
+          <h4 className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 md:text-[11px]">{title}</h4>
           <div className="text-2xl md:text-3xl font-bold tracking-tighter text-slate-900">{value}</div>
-          <p className="text-[9px] md:text-[10px] font-medium text-slate-400 uppercase tracking-wider line-clamp-1">{description}</p>
+          <p className="line-clamp-1 text-[10px] font-medium uppercase tracking-[0.1em] text-slate-500 md:text-[11px]">{description}</p>
         </div>
       </CardContent>
     </Card>

@@ -121,7 +121,7 @@ export function Sidebar() {
             className="flex flex-col"
           >
             <span className="text-sm font-bold tracking-[0.25em] text-slate-900 uppercase leading-none">Nítido</span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.3em] leading-none mt-1.5">Ecosistema</span>
+            <span className="mt-1.5 text-[10px] font-bold uppercase leading-none tracking-[0.22em] text-slate-500">Ecosistema</span>
           </motion.div>
         )}
       </div>
@@ -151,7 +151,7 @@ export function Sidebar() {
                       <motion.span
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        className="text-[11px] font-bold uppercase tracking-widest flex-1 text-left"
+                      className="flex-1 text-left text-[11px] font-bold uppercase tracking-[0.16em]"
                       >
                         {item.name}
                       </motion.span>
@@ -180,7 +180,7 @@ export function Sidebar() {
                     <motion.span
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className="text-[11px] font-bold uppercase tracking-widest"
+                      className="text-[11px] font-bold uppercase tracking-[0.16em]"
                     >
                       {item.name}
                     </motion.span>
@@ -219,7 +219,7 @@ export function Sidebar() {
                             )}
                           >
                             <sub.icon size={14} className={cn(isSubActive ? "text-slate-900" : "text-slate-300")} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest">
+                            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">
                               {sub.name}
                             </span>
                           </Link>
@@ -253,7 +253,7 @@ export function Sidebar() {
               <span className="truncate text-[10px] font-bold uppercase tracking-tight text-slate-900">
                 {user?.email?.split("@")[0]}
               </span>
-              <span className="text-[9px] font-medium text-slate-400">Administrador</span>
+              <span className="text-[10px] font-medium text-slate-500">Administrador</span>
             </motion.div>
           )}
           {!isCollapsed && (

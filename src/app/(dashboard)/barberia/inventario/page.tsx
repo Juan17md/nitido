@@ -52,18 +52,10 @@ export default function BarberiaInventarioPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-200 transition-transform hover:rotate-3">
                 <Package className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400 border-slate-100 px-2 py-0.5 bg-white mb-1">
-                  Barbería
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Control de <span className="italic font-light text-slate-400">Stock</span>
-                </h2>
-              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                Control de <span className="italic font-light text-slate-400">Stock</span>
+              </h2>
             </div>
-            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Monitorea el inventario de insumos y productos para asegurar la continuidad de tus servicios premium.
-            </p>
           </div>
           
           <div className="flex items-center gap-3">
@@ -86,7 +78,7 @@ export default function BarberiaInventarioPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid gap-4 grid-cols-2 lg:grid-cols-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
       >
         {filteredInventario.map((item) => (
           <Card key={item.id} className="group border-slate-100 shadow-sm md:hover:shadow-xl md:hover:shadow-slate-100/50 transition-all duration-500 rounded-3xl overflow-hidden bg-white">
@@ -99,8 +91,8 @@ export default function BarberiaInventarioPage() {
                   <Badge 
                     variant="outline" 
                     className={cn(
-                      "text-[7px] md:text-[8px] font-bold uppercase tracking-tighter px-2 py-0.5",
-                      item.status === "low" ? "text-red-500 border-red-100 bg-red-50" : "text-slate-400 border-slate-100 bg-slate-50/50"
+                      "px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em]",
+                      item.status === "low" ? "border-red-100 bg-red-50 text-red-600" : "border-slate-100 bg-slate-50/50 text-slate-500"
                     )}
                   >
                     {item.status === "low" ? "Bajo" : "OK"}
@@ -119,10 +111,10 @@ export default function BarberiaInventarioPage() {
               <h4 className="text-[10px] md:text-[11px] font-bold uppercase tracking-tight text-slate-900 line-clamp-1">{item.nombre}</h4>
               <div className="flex items-baseline gap-1 mt-1.5">
                 <span className="text-xl md:text-3xl font-bold text-slate-900 tabular-nums tracking-tighter">{item.stock}</span>
-                <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">{item.unidad}</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500 md:text-[11px]">{item.unidad}</span>
               </div>
               {item.minStock && item.minStock > 0 && (
-                 <p className="text-[8px] font-bold text-slate-300 uppercase tracking-widest mt-2">Mínimo: {item.minStock}</p>
+                 <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">Mínimo: {item.minStock}</p>
               )}
             </CardContent>
           </Card>
@@ -130,7 +122,7 @@ export default function BarberiaInventarioPage() {
         {filteredInventario.length === 0 && (
           <div className="col-span-full py-20 text-center rounded-[2rem] border border-dashed border-slate-200 bg-slate-50/30">
              <Package className="h-8 w-8 text-slate-200 mx-auto mb-3" />
-             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">No se encontraron productos</p>
+             <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">No se encontraron productos</p>
           </div>
         )}
       </motion.div>

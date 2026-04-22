@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { startOfDay, startOfWeek, startOfMonth, isAfter } from "date-fns";
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
 interface Transaction {
@@ -13,7 +13,7 @@ interface Transaction {
 export function useFinanzasData(
   data: Transaction[], 
   gastos: Transaction[], 
-  options: { isLavanderia?: boolean } = {}
+  options: { isLavanderia?: boolean; selectedDate?: Date } = {}
 ) {
   const [metrics, setMetrics] = useState({
     hoy: 0,
@@ -24,10 +24,16 @@ export function useFinanzasData(
   });
 
   useEffect(() => {
-    const now = new Date();
-    const hoyStart = startOfDay(now);
-    const semanaStart = startOfWeek(now, { weekStartsOn: 1 }); // Lunes
-    const mesStart = startOfMonth(now);
+    const targetDate = options.selectedDate || new Date();
+    
+    const hoyStart = startOfDay(targetDate);
+    const hoyEnd = endOfDay(targetDate);
+    
+    const semanaStart = startOfWeek(targetDate, { weekStartsOn: 1 }); // Lunes
+    const semanaEnd = endOfWeek(targetDate, { weekStartsOn: 1 });
+    
+    const mesStart = startOfMonth(targetDate);
+    const mesEnd = endOfMonth(targetDate);
 
     let hoy = 0;
     let semana = 0;
@@ -44,9 +50,9 @@ export function useFinanzasData(
 
       const valor = item.precio || 0;
 
-      if (isAfter(fecha, hoyStart)) hoy += valor;
-      if (isAfter(fecha, semanaStart)) semana += valor;
-      if (isAfter(fecha, mesStart)) mes += valor;
+      if (isWithinInterval(fecha, { start: hoyStart, end: hoyEnd })) hoy += valor;
+      if (isWithinInterval(fecha, { start: semanaStart, end: semanaEnd })) semana += valor;
+      if (isWithinInterval(fecha, { start: mesStart, end: mesEnd })) mes += valor;
     });
 
     // Calcular Gastos
@@ -54,31 +60,31 @@ export function useFinanzasData(
       const fecha = item.fecha?.toDate();
       if (!fecha) return;
       const valor = item.monto || 0;
-      if (isAfter(fecha, mesStart)) totalGastos += valor;
+      if (isWithinInterval(fecha, { start: mesStart, end: mesEnd })) totalGastos += valor;
     });
 
-    // Datos para el gráfico - últimos 7 días
+    // Datos para el gráfico - últimos 7 días (basado en targetDate)
     const chartData = Array.from({ length: 7 }).map((_, i) => {
-      const d = new Date();
+      const d = new Date(targetDate);
       d.setDate(d.getDate() - (6 - i));
       const dStart = startOfDay(d);
-      const dEnd = new Date(dStart);
-      dEnd.setDate(dEnd.getDate() + 1);
+      const dEnd = endOfDay(d);
 
       const ingresosDia = data
         .filter(item => {
           const f = options.isLavanderia
             ? item.fechaEntrada?.toDate()
             : item.fecha?.toDate() || item.fechaEntrada?.toDate();
-          if (!f || !(f >= dStart && f < dEnd)) return false;
-          return true;
+          if (!f) return false;
+          return isWithinInterval(f, { start: dStart, end: dEnd });
         })
         .reduce((acc, curr) => acc + (curr.precio || 0), 0);
 
       const gastosDia = gastos
         .filter(item => {
           const f = item.fecha?.toDate();
-          return f && f >= dStart && f < dEnd;
+          if (!f) return false;
+          return isWithinInterval(f, { start: dStart, end: dEnd });
         })
         .reduce((acc, curr) => acc + (curr.monto || 0), 0);
 
@@ -96,7 +102,7 @@ export function useFinanzasData(
       gastos: totalGastos,
       chartData
     });
-  }, [data, gastos, options.isLavanderia]);
+  }, [data, gastos, options.isLavanderia, options.selectedDate]);
 
   return metrics;
 }

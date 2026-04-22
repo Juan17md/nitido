@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { WeekSelector } from "@/components/dashboard/WeekSelector";
 import { QuickAction } from "@/components/dashboard/QuickAction";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,9 +23,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useFinanzasData } from "@/hooks/use-finanzas-data";
 
 // Components
-import { RegistrarVentaDialog } from "@/components/barberia/RegistrarVentaDialog";
+import { RegistrarCorteDialog } from "@/components/barberia/RegistrarCorteDialog";
 import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
 
 // Services
@@ -33,6 +36,7 @@ import { subscribeAlquileresLavanderia as subLavanderia, subscribeMaquinas, subs
 export default function DashboardPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [datosBarberia, setDatosBarberia] = useState<any[]>([]);
   const [datosLavanderia, setDatosLavanderia] = useState<any[]>([]);
   const [inventario, setInventario] = useState<any[]>([]);
@@ -59,18 +63,43 @@ export default function DashboardPage() {
   }, []);
 
   // Cálculos Inteligentes
-  const hoy = new Date().setHours(0, 0, 0, 0);
+  // Usamos useMemo o una referencia estable para evitar que el array vacío cree una nueva referencia en cada render.
+  const emptyGastos = useMemo(() => [], []);
   
-  const ingresosHoy = datosBarberia
-    .filter(s => s.fecha && s.fecha.toDate().getTime() >= hoy)
-    .reduce((acc: number, curr: any) => acc + curr.precio, 0) + 
-    datosLavanderia
-    .filter((p) => p.fechaEntrada && p.fechaEntrada.toDate().getTime() >= hoy)
-    .reduce((acc: number, curr: any) => acc + curr.precio, 0);
+  const finanzasBarberia = useFinanzasData(datosBarberia, emptyGastos, { selectedDate });
+  const finanzasLavanderia = useFinanzasData(datosLavanderia, emptyGastos, { isLavanderia: true, selectedDate });
+
+  const ingresosSemana = finanzasBarberia.semana + finanzasLavanderia.semana;
+  const ingresosMes = finanzasBarberia.mes + finanzasLavanderia.mes;
+
+  const startW = startOfWeek(selectedDate, { weekStartsOn: 1 });
+  const endW = endOfWeek(selectedDate, { weekStartsOn: 1 });
+
+  const barberiaSemana = datosBarberia.filter(item => {
+    const f = item.fecha?.toDate();
+    if (!f) return false;
+    return isWithinInterval(f, { start: startW, end: endW });
+  });
+
+  const lavanderiaSemana = datosLavanderia.filter(item => {
+    const f = item.fechaEntrada?.toDate();
+    if (!f) return false;
+    return isWithinInterval(f, { start: startW, end: endW });
+  });
+
+  const ingresosBarberia = barberiaSemana.reduce((acc: number, curr: any) => acc + (curr.precio || 0), 0);
+  const ingresosLavanderia = lavanderiaSemana.reduce((acc: number, curr: any) => acc + (curr.precio || 0), 0);
   
-  const stockBajo = inventario.filter(item => item.status === 'low').length;
-  const maquinasOcupadas = maquinas.filter(m => m.estado === 'ocupada').length;
-  const pedidosPendientes = datosLavanderia.filter((p) => !p.fechaRecibida).length;
+  const serviciosBarberiaCount = barberiaSemana.length;
+  const alquileresLavanderiaCount = lavanderiaSemana.length;
+
+  const allDates = [
+    ...datosBarberia.map(d => d.fecha?.toDate()).filter(Boolean),
+    ...datosLavanderia.map(d => d.fechaEntrada?.toDate()).filter(Boolean)
+  ] as Date[];
+
+  const minDate = allDates.length > 0 ? new Date(Math.min(...allDates.map(d => d.getTime()))) : new Date();
+  const maxDate = new Date(); // Asumimos que no deberíamos navegar al futuro más allá de la semana actual.
 
   return (
     <div className="expansive-container mx-auto py-6 md:py-12 px-6 md:px-0 space-y-6 md:space-y-16">
@@ -102,14 +131,14 @@ export default function DashboardPage() {
                 </h2>
               </div>
             </div>
-            <p className="text-[10px] md:text-xs font-medium text-slate-400 max-w-[260px] md:max-w-md ml-1 leading-relaxed">
+            <p className="ml-1 max-w-[260px] text-[11px] font-medium leading-relaxed text-slate-500 md:max-w-md md:text-xs">
               Bienvenido, <span className="text-slate-900 font-bold">{user?.email?.split("@")[0] || "Admin"}</span>. Resumen unificado de tu ecosistema de negocios.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden md:flex flex-col items-end mr-2">
-              <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400">Sesión Activa</span>
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Sesión Activa</span>
               <span className="text-[10px] font-bold text-slate-900">{user?.email || "Invitado"}</span>
             </div>
             <div className="hidden md:flex items-center gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] text-slate-900 bg-slate-50 px-4 md:px-5 py-2.5 md:py-3 rounded-2xl border border-slate-100 shadow-sm">
@@ -126,7 +155,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-3"
       >
-        <RegistrarVentaDialog servicios={serviciosBarberia} />
+        <RegistrarCorteDialog servicios={serviciosBarberia} />
         <NuevoAlquilerDialog servicios={serviciosLavanderia} />
       </motion.section>
 
@@ -134,33 +163,53 @@ export default function DashboardPage() {
       <motion.section 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 grid gap-2 md:gap-4 grid-cols-2 lg:grid-cols-4"
+        className="relative z-10 space-y-4 md:space-y-6"
       >
-        <StatCard
-          title="Ingresos Hoy"
-          value={`$${ingresosHoy.toFixed(2)}`}
-          description="Ecosistema total"
-          icon={DollarSign}
+        <WeekSelector 
+          selectedDate={selectedDate} 
+          onChange={setSelectedDate} 
+          minDate={minDate} 
+          maxDate={maxDate} 
         />
-        <StatCard
-          title="Servicios Pendientes"
-          value={pedidosPendientes.toString()}
-          description="Lavandería"
-          icon={Waves}
-        />
-        <StatCard
-          title="Alertas de Stock"
-          value={stockBajo.toString()}
-          description={stockBajo > 0 ? "Reponer productos" : "Inventario OK"}
-          icon={Scissors}
-          className={cn(stockBajo > 0 && "ring-2 ring-red-100")}
-        />
-        <StatCard
-          title="Máquinas en Uso"
-          value={maquinasOcupadas.toString()}
-          description={`De ${maquinas.length} unidades`}
-          icon={TrendingUp}
-        />
+        
+        <div className="grid gap-2 md:gap-4 grid-cols-2 lg:grid-cols-3">
+          <StatCard
+            title="Ingresos Semana"
+            value={`$${ingresosSemana.toFixed(2)}`}
+            description="Ecosistema total"
+            icon={TrendingUp}
+          />
+          <StatCard
+            title="Ingresos Mes"
+            value={`$${ingresosMes.toFixed(2)}`}
+            description="Total del mes seleccionado"
+            icon={DollarSign}
+          />
+          <StatCard
+            title="Ingresos Barbería"
+            value={`$${ingresosBarberia.toFixed(2)}`}
+            description="Total semanal"
+            icon={Scissors}
+          />
+          <StatCard
+            title="Ingresos Lavandería"
+            value={`$${ingresosLavanderia.toFixed(2)}`}
+            description="Total semanal"
+            icon={Waves}
+          />
+          <StatCard
+            title="Servicios Realizados"
+            value={serviciosBarberiaCount.toString()}
+            description="Semana en barbería"
+            icon={Scissors}
+          />
+          <StatCard
+            title="Alquileres Realizados"
+            value={alquileresLavanderiaCount.toString()}
+            description="Semana en lavandería"
+            icon={Waves}
+          />
+        </div>
       </motion.section>
 
       {/* Business Selectors */}
@@ -180,7 +229,7 @@ export default function DashboardPage() {
                 <CardTitle className="text-sm md:text-xl font-bold tracking-tight text-slate-900 uppercase">Gestión Barbería</CardTitle>
               </div>
             </div>
-            <CardDescription className="text-[11px] md:text-xs font-medium text-slate-400 mt-2">
+            <CardDescription className="mt-2 text-[11px] font-medium text-slate-500 md:text-xs">
               Control integral de servicios, agenda de clientes e inventario.
             </CardDescription>
           </CardHeader>
@@ -208,7 +257,7 @@ export default function DashboardPage() {
                 <CardTitle className="text-sm md:text-xl font-bold tracking-tight text-slate-900 uppercase">Gestión Lavandería</CardTitle>
               </div>
             </div>
-            <CardDescription className="text-[11px] md:text-xs font-medium text-slate-400 mt-2">
+            <CardDescription className="mt-2 text-[11px] font-medium text-slate-500 md:text-xs">
               Administración de equipos, control de insumos y finanzas.
             </CardDescription>
           </CardHeader>
@@ -227,7 +276,7 @@ export default function DashboardPage() {
       </motion.section>
 
       <footer className="py-8 md:py-12 text-center relative z-10">
-        <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-slate-200">
+        <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400 md:text-[11px]">
           Nítido &copy; {new Date().getFullYear()} • Management
         </p>
       </footer>

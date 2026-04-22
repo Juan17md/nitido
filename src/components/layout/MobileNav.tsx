@@ -59,47 +59,36 @@ export function MobileNav() {
   return (
     <>
       {/* Bottom Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/90 backdrop-blur-2xl border-t border-slate-100 px-10 pb-safe-area-inset-bottom shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
-        <nav className="flex items-center justify-between h-20">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/90 backdrop-blur-2xl border-t border-slate-100 px-3 py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgba(0,0,0,0.03)]">
+        <nav className="grid h-12 grid-cols-3 gap-2">
           <Link
             href="/"
             className={cn(
-              "flex flex-col items-center justify-center gap-1.5 transition-all duration-300 active:scale-90",
-              pathname === "/" ? "text-slate-900" : "text-slate-300"
+              "flex items-center justify-center gap-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-300 active:scale-95",
+              pathname === "/" ? "bg-slate-950 text-white shadow-sm" : "text-slate-400 hover:bg-slate-50"
             )}
           >
-            <div className={cn(
-              "p-2 rounded-xl transition-colors",
-              pathname === "/" ? "bg-slate-900 text-white shadow-lg shadow-slate-100" : "bg-transparent"
-            )}>
-              <LayoutDashboard size={18} />
-            </div>
-            <span className="text-[8px] font-bold uppercase tracking-[0.1em]">Inicio</span>
+            <LayoutDashboard size={16} />
+            <span>Inicio</span>
           </Link>
 
           <button
             onClick={() => setIsOpen(true)}
-            className="relative -top-4 flex flex-col items-center justify-center"
+            className="flex items-center justify-center gap-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 transition-all duration-300 active:scale-95 hover:bg-slate-50"
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-2xl shadow-slate-300 active:scale-95 transition-all duration-300">
-              <Menu size={24} />
-            </div>
+            <Menu size={16} />
+            <span>Menú</span>
           </button>
 
           <Link
             href="/historial"
             className={cn(
-              "flex flex-col items-center justify-center gap-1.5 transition-all duration-300 active:scale-90",
-              pathname.includes("historial") ? "text-slate-900" : "text-slate-300"
+              "flex items-center justify-center gap-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-300 active:scale-95",
+              pathname.includes("historial") ? "bg-slate-950 text-white shadow-sm" : "text-slate-400 hover:bg-slate-50"
             )}
           >
-            <div className={cn(
-              "p-2 rounded-xl transition-colors",
-              pathname.includes("historial") ? "bg-slate-900 text-white shadow-lg shadow-slate-100" : "bg-transparent"
-            )}>
-              <History size={18} />
-            </div>
-            <span className="text-[8px] font-bold uppercase tracking-[0.1em]">Global</span>
+            <History size={16} />
+            <span>Global</span>
           </Link>
         </nav>
       </div>

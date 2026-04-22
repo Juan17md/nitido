@@ -32,8 +32,8 @@ export function StatCard({
         <Icon size={100} strokeWidth={1} />
       </div>
 
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 relative z-10 pt-3 md:pt-6">
-        <CardTitle className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400">
+      <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-1 pt-3 md:pt-6">
+        <CardTitle className="text-[10px] font-bold uppercase tracking-[0.22em] text-slate-500 md:text-[11px]">
           {title}
         </CardTitle>
         <div className="flex h-6 w-6 md:h-8 md:w-8 items-center justify-center rounded-lg bg-slate-50 text-slate-400 md:group-hover:bg-slate-900 md:group-hover:text-white transition-all duration-300">
@@ -47,7 +47,7 @@ export function StatCard({
           <div className="flex items-center gap-2 mt-1 md:mt-2">
             {trend && (
               <span className={cn(
-                "text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1",
+                "flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
                 trend.positive ? "bg-emerald-50/50 text-emerald-600" : "bg-rose-50/50 text-rose-600"
               )}>
                 <span className={cn("h-1 w-1 rounded-full", trend.positive ? "bg-emerald-500" : "bg-rose-500")} />
@@ -55,7 +55,7 @@ export function StatCard({
               </span>
             )}
             {description && (
-              <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
                 {description}
               </p>
             )}

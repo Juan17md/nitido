@@ -34,7 +34,7 @@ import {
 } from "@/lib/barberia-service";
 
 // Importar nuevos diálogos
-import { RegistrarVentaDialog } from "@/components/barberia/RegistrarVentaDialog";
+import { RegistrarCorteDialog } from "@/components/barberia/RegistrarCorteDialog";
 import { NuevoServicioDialog } from "@/components/barberia/NuevoServicioDialog";
 import { AjustarStockDialog } from "@/components/barberia/AjustarStockDialog";
 
@@ -88,18 +88,10 @@ export default function BarberiaPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-200 transition-transform hover:rotate-3">
                 <Scissors className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400 border-slate-100 px-2 py-0.5 bg-white mb-1">
-                  Módulo Barbería
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Panel de <span className="italic font-light text-slate-400">Control</span>
-                </h2>
-              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                Panel de <span className="italic font-light text-slate-400">Control</span>
+              </h2>
             </div>
-            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Gestiona el rendimiento operativo, las ventas diarias y el inventario de tu barbería desde una interfaz centralizada.
-            </p>
           </div>
         </div>
       </motion.div>
@@ -111,7 +103,7 @@ export default function BarberiaPage() {
         className="space-y-6 md:space-y-8"
       >
         {/* Stats Grid */}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3">
           <StatCard
             title="Semana"
             value={`$${ingresosSemana.toFixed(2)}`}
@@ -129,7 +121,7 @@ export default function BarberiaPage() {
             value={serviciosMensuales.toString()}
             description="este mes"
             icon={ClipboardList}
-            className="sm:col-span-2 md:col-span-1"
+            className="col-span-2 md:col-span-1"
           />
         </div>
 
@@ -138,10 +130,10 @@ export default function BarberiaPage() {
           <Card className="md:col-span-1 border-slate-100 shadow-sm overflow-hidden flex flex-col">
             <CardHeader className="bg-slate-50/50 pb-4">
               <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Acciones Rápidas</CardTitle>
-              <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Operaciones frecuentes</CardDescription>
+              <CardDescription className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">Operaciones frecuentes</CardDescription>
             </CardHeader>
             <CardContent className="pt-6 grid gap-3">
-              <RegistrarVentaDialog servicios={servicios} />
+              <RegistrarCorteDialog servicios={servicios} />
               <NuevoServicioDialog />
               <AjustarStockDialog productos={inventario} />
             </CardContent>
@@ -152,51 +144,74 @@ export default function BarberiaPage() {
             <CardHeader className="flex flex-row items-center justify-between pb-4">
               <div>
                 <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Actividad Reciente</CardTitle>
-                <CardDescription className="text-[9px] font-medium text-slate-400 uppercase tracking-wider">Últimos registros</CardDescription>
+                <CardDescription className="text-[10px] font-medium uppercase tracking-[0.12em] text-slate-500">Últimos registros</CardDescription>
               </div>
               <Link href="/barberia/historial">
-                <Button variant="ghost" size="sm" className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Ver Todos</Button>
+                <Button variant="ghost" size="sm" className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Ver Todos</Button>
               </Link>
             </CardHeader>
             <CardContent className="px-0 md:px-6">
               {historial.length === 0 ? (
                 <div className="py-10 text-center px-6">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-300">No hay registros hoy</p>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">No hay registros hoy</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto scrollbar-hide">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="border-slate-50 hover:bg-transparent px-4">
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 pl-6 md:pl-4 whitespace-nowrap">Servicio</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Cliente</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 whitespace-nowrap">Monto</TableHead>
-                        <TableHead className="text-[9px] font-bold uppercase tracking-widest text-slate-400 text-right pr-6 md:pr-4 whitespace-nowrap">Hora</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {historial.slice(0, 5).map((row) => (
-                        <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
-                          <TableCell className="py-4 pl-6 md:pl-4">
-                            <span className="text-[11px] font-bold text-slate-900 whitespace-nowrap">{row.nombreServicio}</span>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-[10px] font-medium text-slate-400 whitespace-nowrap">{row.cliente}</span>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="secondary" className="bg-slate-100 text-slate-900 text-[9px] font-bold border-none">
-                              ${row.precio.toFixed(2)}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right pr-6 md:pr-4">
-                            <span className="text-[10px] font-bold text-slate-400 tabular-nums whitespace-nowrap">
-                              {row.fecha.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                          </TableCell>
+                <div className="space-y-1">
+                  {/* Vista Móvil */}
+                  <div className="md:hidden divide-y divide-slate-50">
+                    {historial.slice(0, 5).map((row) => (
+                      <div key={row.id} className="p-4 flex flex-col gap-1.5">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[11px] font-bold text-slate-900 uppercase tracking-tight">{row.nombreServicio}</span>
+                          <Badge variant="secondary" className="bg-slate-100 text-slate-900 text-[9px] font-bold border-none px-2 py-0.5">
+                            ${row.precio.toFixed(2)}
+                          </Badge>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-medium text-slate-500 uppercase tracking-[0.12em]">{row.cliente}</span>
+                          <span className="text-[10px] font-bold text-slate-400 tabular-nums uppercase">
+                            {row.fecha.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Vista Escritorio */}
+                  <div className="hidden md:block overflow-x-auto scrollbar-hide">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-slate-50 hover:bg-transparent px-4">
+                          <TableHead className="whitespace-nowrap pl-6 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pl-4">Servicio</TableHead>
+                          <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Cliente</TableHead>
+                          <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Monto</TableHead>
+                          <TableHead className="whitespace-nowrap pr-6 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pr-4">Hora</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {historial.slice(0, 5).map((row) => (
+                          <TableRow key={row.id} className="border-slate-50 md:hover:bg-slate-50/50 transition-colors group">
+                            <TableCell className="py-4 pl-6 md:pl-4">
+                              <span className="text-[11px] font-bold text-slate-900 whitespace-nowrap">{row.nombreServicio}</span>
+                            </TableCell>
+                            <TableCell>
+                              <span className="whitespace-nowrap text-[11px] font-medium text-slate-600">{row.cliente}</span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="secondary" className="bg-slate-100 text-slate-900 text-[9px] font-bold border-none">
+                                ${row.precio.toFixed(2)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right pr-6 md:pr-4">
+                              <span className="whitespace-nowrap text-[11px] font-bold tabular-nums text-slate-600">
+                                {row.fecha.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               )}
             </CardContent>

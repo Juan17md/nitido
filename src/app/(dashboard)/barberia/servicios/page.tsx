@@ -31,18 +31,10 @@ export default function BarberiaServiciosPage() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-200 transition-transform hover:rotate-3">
                 <Scissors className="h-6 w-6" />
               </div>
-              <div className="flex flex-col">
-                <Badge variant="outline" className="w-fit text-[8px] font-bold uppercase tracking-[0.2em] text-slate-400 border-slate-100 px-2 py-0.5 bg-white mb-1">
-                  Barbería
-                </Badge>
-                <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
-                  Catálogo de <span className="italic font-light text-slate-400">Servicios</span>
-                </h2>
-              </div>
+              <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase leading-none">
+                Catálogo de <span className="italic font-light text-slate-400">Servicios</span>
+              </h2>
             </div>
-            <p className="text-xs font-medium text-slate-400 max-w-md ml-1">
-              Gestiona el listado maestro de cortes, tratamientos y servicios premium ofrecidos en tu sucursal.
-            </p>
           </div>
           
           <div className="shrink-0">
@@ -59,7 +51,7 @@ export default function BarberiaServiciosPage() {
       >
         {servicios.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-[300px] rounded-3xl border border-dashed border-slate-200 px-6 text-center">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sin servicios registrados</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Sin servicios registrados</p>
           </div>
         ) : (
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,7 +69,7 @@ export default function BarberiaServiciosPage() {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="h-8 text-[10px] font-bold uppercase tracking-widest text-red-400 md:hover:text-red-600 md:hover:bg-red-50"
+                    className="h-9 px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-red-400 md:h-8 md:hover:bg-red-50 md:hover:text-red-600"
                     onClick={() => {
                       if (confirm("¿Eliminar este servicio?")) {
                         eliminarServicio(s.id!);

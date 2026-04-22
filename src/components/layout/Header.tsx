@@ -24,7 +24,7 @@ export function Header() {
       <div className="expansive-container mx-auto flex h-16 items-center justify-between px-4 md:px-0">
         {/* Left Side: Page Title / Search */}
         <div className="flex items-center gap-4 md:gap-8">
-          <h1 className="text-[9px] md:text-xs font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-slate-400">
+          <h1 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 md:text-xs md:tracking-[0.24em]">
             {getPageTitle()}
           </h1>
           
@@ -33,7 +33,7 @@ export function Header() {
             <input 
               type="text" 
               placeholder="Buscar..." 
-              className="bg-transparent border-none outline-none text-[11px] font-bold tracking-wider placeholder:text-slate-300 w-48"
+              className="w-48 border-none bg-transparent text-[11px] font-bold tracking-wider text-slate-700 outline-none placeholder:text-slate-400"
             />
           </div>
         </div>
@@ -52,7 +52,7 @@ export function Header() {
                 <span className="text-[10px] font-bold uppercase tracking-tight text-slate-900 leading-none">
                   {user.email?.split("@")[0]}
                 </span>
-                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mt-1">
+                <span className="mt-1 text-[10px] font-bold uppercase leading-none tracking-[0.14em] text-slate-500">
                   En Línea
                 </span>
               </div>
