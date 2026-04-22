@@ -1,0 +1,212 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function soloCamposPermitidos(campos) {
+      return request.resource.data.keys().hasOnly(campos);
+    }
+
+    function requiereCampos(campos) {
+      return request.resource.data.keys().hasAll(campos);
+    }
+
+    function esStringNoVacio(valor) {
+      return valor is string && valor.size() > 0;
+    }
+
+    function esNumeroNoNegativo(valor) {
+      return valor is number && valor >= 0;
+    }
+
+    function timestampValido(valor) {
+      return valor is timestamp;
+    }
+
+    match /barberia_servicios/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "precio", "descripcion", "createdAt"])
+        && requiereCampos(["nombre", "precio", "descripcion", "createdAt"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && request.resource.data.descripcion is string
+        && timestampValido(request.resource.data.createdAt);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "precio", "descripcion", "createdAt"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && request.resource.data.descripcion is string
+        && timestampValido(request.resource.data.createdAt);
+      allow delete: if estaAutenticado();
+    }
+
+    match /barberia_historial/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["servicioId", "nombreServicio", "cliente", "precio", "fecha"])
+        && requiereCampos(["servicioId", "nombreServicio", "cliente", "precio", "fecha"])
+        && esStringNoVacio(request.resource.data.servicioId)
+        && esStringNoVacio(request.resource.data.nombreServicio)
+        && esStringNoVacio(request.resource.data.cliente)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && timestampValido(request.resource.data.fecha);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["servicioId", "nombreServicio", "cliente", "precio", "fecha"])
+        && esStringNoVacio(request.resource.data.servicioId)
+        && esStringNoVacio(request.resource.data.nombreServicio)
+        && esStringNoVacio(request.resource.data.cliente)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && timestampValido(request.resource.data.fecha);
+      allow delete: if estaAutenticado();
+    }
+
+    match /barberia_inventario/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "stock", "unidad", "status", "minStock"])
+        && requiereCampos(["nombre", "stock", "unidad", "status"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && esNumeroNoNegativo(request.resource.data.stock)
+        && esStringNoVacio(request.resource.data.unidad)
+        && request.resource.data.status in ["ok", "low"]
+        && (!("minStock" in request.resource.data) || esNumeroNoNegativo(request.resource.data.minStock));
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "stock", "unidad", "status", "minStock"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && esNumeroNoNegativo(request.resource.data.stock)
+        && esStringNoVacio(request.resource.data.unidad)
+        && request.resource.data.status in ["ok", "low"]
+        && (!("minStock" in request.resource.data) || esNumeroNoNegativo(request.resource.data.minStock));
+      allow delete: if estaAutenticado();
+    }
+
+    match /barberia_gastos/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["descripcion", "monto", "categoria", "fecha"])
+        && requiereCampos(["descripcion", "monto", "categoria", "fecha"])
+        && esStringNoVacio(request.resource.data.descripcion)
+        && esNumeroNoNegativo(request.resource.data.monto)
+        && esStringNoVacio(request.resource.data.categoria)
+        && timestampValido(request.resource.data.fecha);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["descripcion", "monto", "categoria", "fecha"])
+        && esStringNoVacio(request.resource.data.descripcion)
+        && esNumeroNoNegativo(request.resource.data.monto)
+        && esStringNoVacio(request.resource.data.categoria)
+        && timestampValido(request.resource.data.fecha);
+      allow delete: if estaAutenticado();
+    }
+
+    match /lavanderia_servicios/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "precio", "tipo", "descripcion", "createdAt"])
+        && requiereCampos(["nombre", "precio", "tipo", "descripcion", "createdAt"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && request.resource.data.tipo in ["lavado", "secado", "completo", "otros"]
+        && request.resource.data.descripcion is string
+        && timestampValido(request.resource.data.createdAt);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "precio", "tipo", "descripcion", "createdAt"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && request.resource.data.tipo in ["lavado", "secado", "completo", "otros"]
+        && request.resource.data.descripcion is string
+        && timestampValido(request.resource.data.createdAt);
+      allow delete: if estaAutenticado();
+    }
+
+    match /lavanderia_pedidos/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos([
+          "cliente",
+          "servicioId",
+          "nombreServicio",
+          "precio",
+          "fechaEntrada",
+          "fechaRecibida",
+          "recepcionAutomatica",
+          "maquinaId",
+          "estado"
+        ])
+        && requiereCampos(["cliente", "servicioId", "nombreServicio", "precio", "fechaEntrada"])
+        && esStringNoVacio(request.resource.data.cliente)
+        && esStringNoVacio(request.resource.data.servicioId)
+        && esStringNoVacio(request.resource.data.nombreServicio)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && timestampValido(request.resource.data.fechaEntrada)
+        && (!("fechaRecibida" in request.resource.data) || timestampValido(request.resource.data.fechaRecibida))
+        && (!("recepcionAutomatica" in request.resource.data) || request.resource.data.recepcionAutomatica is bool)
+        && (!("maquinaId" in request.resource.data) || request.resource.data.maquinaId is string)
+        && (!("estado" in request.resource.data) || request.resource.data.estado in ["pendiente", "en_proceso", "listo", "entregado"]);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos([
+          "cliente",
+          "servicioId",
+          "nombreServicio",
+          "precio",
+          "fechaEntrada",
+          "fechaRecibida",
+          "recepcionAutomatica",
+          "maquinaId",
+          "estado"
+        ])
+        && esStringNoVacio(request.resource.data.cliente)
+        && esStringNoVacio(request.resource.data.servicioId)
+        && esStringNoVacio(request.resource.data.nombreServicio)
+        && esNumeroNoNegativo(request.resource.data.precio)
+        && timestampValido(request.resource.data.fechaEntrada)
+        && (!("fechaRecibida" in request.resource.data) || timestampValido(request.resource.data.fechaRecibida))
+        && (!("recepcionAutomatica" in request.resource.data) || request.resource.data.recepcionAutomatica is bool)
+        && (!("maquinaId" in request.resource.data) || request.resource.data.maquinaId is string)
+        && (!("estado" in request.resource.data) || request.resource.data.estado in ["pendiente", "en_proceso", "listo", "entregado"]);
+      allow delete: if estaAutenticado();
+    }
+
+    match /lavanderia_maquinas/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "tipo", "estado", "ultimaRevision"])
+        && requiereCampos(["nombre", "tipo", "estado", "ultimaRevision"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && request.resource.data.tipo in ["lavadora", "secadora"]
+        && request.resource.data.estado in ["disponible", "ocupada", "mantenimiento"]
+        && timestampValido(request.resource.data.ultimaRevision);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["nombre", "tipo", "estado", "ultimaRevision"])
+        && esStringNoVacio(request.resource.data.nombre)
+        && request.resource.data.tipo in ["lavadora", "secadora"]
+        && request.resource.data.estado in ["disponible", "ocupada", "mantenimiento"]
+        && timestampValido(request.resource.data.ultimaRevision);
+      allow delete: if estaAutenticado();
+    }
+
+    match /lavanderia_gastos/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["descripcion", "monto", "categoria", "fecha"])
+        && requiereCampos(["descripcion", "monto", "categoria", "fecha"])
+        && esStringNoVacio(request.resource.data.descripcion)
+        && esNumeroNoNegativo(request.resource.data.monto)
+        && esStringNoVacio(request.resource.data.categoria)
+        && timestampValido(request.resource.data.fecha);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["descripcion", "monto", "categoria", "fecha"])
+        && esStringNoVacio(request.resource.data.descripcion)
+        && esNumeroNoNegativo(request.resource.data.monto)
+        && esStringNoVacio(request.resource.data.categoria)
+        && timestampValido(request.resource.data.fecha);
+      allow delete: if estaAutenticado();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
