@@ -10,6 +10,7 @@ import {
   History,
   Menu,
   X,
+  LogOut,
   ChevronRight,
   Briefcase,
   Database,
@@ -18,6 +19,8 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const navItems = [
   { name: "Panel", href: "/", icon: LayoutDashboard },
@@ -50,6 +53,15 @@ const navItems = [
 export function MobileNav() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
 
   // Close menu when pathname changes
   useEffect(() => {
@@ -178,6 +190,16 @@ export function MobileNav() {
                     </div>
                   );
                 })}
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-3 rounded-2xl border border-rose-100 bg-rose-50/70 p-4 text-rose-700 transition-all active:scale-95"
+                >
+                  <LogOut size={16} />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.14em]">
+                    Cerrar sesión
+                  </span>
+                </button>
               </div>
             </motion.div>
           </>
