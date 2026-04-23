@@ -180,42 +180,78 @@ export default function DashboardPage() {
           maxDate={maxDate} 
         />
         
-        <div className="grid gap-2 md:gap-4 grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-2 md:gap-4 grid-cols-2 lg:grid-cols-4">
           <StatCard
-            title="Ingresos Semana"
+            title="Ingreso Personal Semana"
             value={`$${ingresosUsuarioSemana.toFixed(2)}`}
-            description={`Bruto: $${ingresosBrutosSemana.toFixed(2)} • Emp: $${ingresosEmprendimientoSemana.toFixed(2)}`}
             icon={TrendingUp}
+            className="border-emerald-200/80 bg-emerald-50/40"
           />
           <StatCard
-            title="Ingresos Mes"
+            title="Ingreso Personal Mes"
             value={`$${ingresosUsuarioMes.toFixed(2)}`}
-            description={`Bruto: $${ingresosBrutosMes.toFixed(2)} • Emp: $${ingresosEmprendimientoMes.toFixed(2)}`}
             icon={DollarSign}
+            className="border-emerald-200/80 bg-emerald-50/40"
           />
           <StatCard
-            title="Ingresos Barbería"
+            title="Ingreso Completo Semana"
+            value={`$${ingresosBrutosSemana.toFixed(2)}`}
+            icon={DollarSign}
+            className="border-blue-200/80 bg-blue-50/45"
+          />
+          <StatCard
+            title="Ingreso Completo Mes"
+            value={`$${ingresosBrutosMes.toFixed(2)}`}
+            icon={DollarSign}
+            className="border-blue-200/80 bg-blue-50/45"
+          />
+          <StatCard
+            title="Ingreso Personal Barbería"
             value={`$${ingresosUsuarioBarberia.toFixed(2)}`}
-            description={`Bruto: $${ingresosBrutosBarberia.toFixed(2)} • Emp: $${ingresosEmprendimientoBarberia.toFixed(2)}`}
             icon={Scissors}
+            className="border-violet-200/80 bg-violet-50/40"
           />
           <StatCard
-            title="Ingresos Lavandería"
+            title="Ingreso Personal Lavandería"
             value={`$${ingresosUsuarioLavanderia.toFixed(2)}`}
-            description={`Bruto: $${ingresosBrutosLavanderia.toFixed(2)} • Emp: $${ingresosEmprendimientoLavanderia.toFixed(2)}`}
             icon={Waves}
+            className="border-cyan-200/80 bg-cyan-50/45"
           />
           <StatCard
-            title="Servicios Realizados"
-            value={serviciosBarberiaCount.toString()}
-            description="Semana en barbería"
+            title="Ingreso Completo Barbería"
+            value={`$${ingresosBrutosBarberia.toFixed(2)}`}
             icon={Scissors}
+            className="border-violet-200/80 bg-violet-50/40"
           />
           <StatCard
-            title="Alquileres Realizados"
-            value={alquileresLavanderiaCount.toString()}
-            description="Semana en lavandería"
+            title="Ingreso Completo Lavandería"
+            value={`$${ingresosBrutosLavanderia.toFixed(2)}`}
             icon={Waves}
+            className="border-cyan-200/80 bg-cyan-50/45"
+          />
+          <StatCard
+            title="Ingreso Para la Barbería"
+            value={`$${ingresosEmprendimientoBarberia.toFixed(2)}`}
+            icon={Scissors}
+            className="border-amber-200/90 bg-amber-50/50"
+          />
+          <StatCard
+            title="Ingreso Para la Lavandería"
+            value={`$${ingresosEmprendimientoLavanderia.toFixed(2)}`}
+            icon={Waves}
+            className="border-amber-200/90 bg-amber-50/50"
+          />
+          <StatCard
+            title="Servicios Barbería Semana"
+            value={serviciosBarberiaCount.toString()}
+            icon={Scissors}
+            className="border-slate-200/90 bg-slate-50/70"
+          />
+          <StatCard
+            title="Alquileres Lavandería Semana"
+            value={alquileresLavanderiaCount.toString()}
+            icon={Waves}
+            className="border-slate-200/90 bg-slate-50/70"
           />
         </div>
       </motion.section>

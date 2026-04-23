@@ -64,24 +64,36 @@ export default function BarberiaFinanzasPage() {
       </motion.div>
 
 
-      <div className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-4">
+      <div className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         <StatCard
           title="Ingresos Hoy"
           value={`$${metrics.ingresosUsuarioHoy.toFixed(2)}`}
-          description={`Bruto: $${metrics.ingresosBrutosHoy.toFixed(2)} • Emp: $${metrics.ingresosEmprendimientoHoy.toFixed(2)}`}
+          description="Ganancia personal"
           icon={TrendingUp}
         />
         <StatCard
           title="Semana"
           value={`$${metrics.ingresosUsuarioSemana.toFixed(2)}`}
-          description={`Bruto: $${metrics.ingresosBrutosSemana.toFixed(2)} • Emp: $${metrics.ingresosEmprendimientoSemana.toFixed(2)}`}
+          description="Ganancia personal"
           icon={Wallet}
         />
         <StatCard
           title="Mes"
           value={`$${metrics.ingresosUsuarioMes.toFixed(2)}`}
-          description={`Bruto: $${metrics.ingresosBrutosMes.toFixed(2)} • Emp: $${metrics.ingresosEmprendimientoMes.toFixed(2)}`}
+          description="Ganancia personal"
           icon={TrendingUp}
+        />
+        <StatCard
+          title="Ingreso Completo Mes"
+          value={`$${metrics.ingresosBrutosMes.toFixed(2)}`}
+          description="Total antes del reparto"
+          icon={DollarSign}
+        />
+        <StatCard
+          title="Para la"
+          value={`$${metrics.ingresosEmprendimientoMes.toFixed(2)}`}
+          description="Parte del ingreso completo"
+          icon={Wallet}
         />
         <StatCard
           title="Gastos"
