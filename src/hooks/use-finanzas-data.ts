@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { Timestamp } from "firebase/firestore";
 
+const PORCENTAJE_USUARIO = 0.6;
+const PORCENTAJE_EMPRENDIMIENTO = 0.4;
+
 interface Transaction {
   precio?: number;
   monto?: number;
@@ -16,6 +19,15 @@ export function useFinanzasData(
   options: { isLavanderia?: boolean; selectedDate?: Date } = {}
 ) {
   const [metrics, setMetrics] = useState({
+    ingresosBrutosHoy: 0,
+    ingresosBrutosSemana: 0,
+    ingresosBrutosMes: 0,
+    ingresosUsuarioHoy: 0,
+    ingresosUsuarioSemana: 0,
+    ingresosUsuarioMes: 0,
+    ingresosEmprendimientoHoy: 0,
+    ingresosEmprendimientoSemana: 0,
+    ingresosEmprendimientoMes: 0,
     hoy: 0,
     semana: 0,
     mes: 0,
@@ -35,9 +47,9 @@ export function useFinanzasData(
     const mesStart = startOfMonth(targetDate);
     const mesEnd = endOfMonth(targetDate);
 
-    let hoy = 0;
-    let semana = 0;
-    let mes = 0;
+    let ingresosBrutosHoy = 0;
+    let ingresosBrutosSemana = 0;
+    let ingresosBrutosMes = 0;
     let totalGastos = 0;
 
     // Calcular Ingresos
@@ -50,9 +62,9 @@ export function useFinanzasData(
 
       const valor = item.precio || 0;
 
-      if (isWithinInterval(fecha, { start: hoyStart, end: hoyEnd })) hoy += valor;
-      if (isWithinInterval(fecha, { start: semanaStart, end: semanaEnd })) semana += valor;
-      if (isWithinInterval(fecha, { start: mesStart, end: mesEnd })) mes += valor;
+      if (isWithinInterval(fecha, { start: hoyStart, end: hoyEnd })) ingresosBrutosHoy += valor;
+      if (isWithinInterval(fecha, { start: semanaStart, end: semanaEnd })) ingresosBrutosSemana += valor;
+      if (isWithinInterval(fecha, { start: mesStart, end: mesEnd })) ingresosBrutosMes += valor;
     });
 
     // Calcular Gastos
@@ -79,6 +91,7 @@ export function useFinanzasData(
           return isWithinInterval(f, { start: dStart, end: dEnd });
         })
         .reduce((acc, curr) => acc + (curr.precio || 0), 0);
+      const ingresosUsuarioDia = ingresosDia * PORCENTAJE_USUARIO;
 
       const gastosDia = gastos
         .filter(item => {
@@ -90,15 +103,32 @@ export function useFinanzasData(
 
       return {
         name: d.toLocaleDateString('es-ES', { weekday: 'short' }),
-        ingresos: ingresosDia,
+        ingresos: ingresosUsuarioDia,
         gastos: gastosDia
       };
     });
 
+    const ingresosUsuarioHoy = ingresosBrutosHoy * PORCENTAJE_USUARIO;
+    const ingresosUsuarioSemana = ingresosBrutosSemana * PORCENTAJE_USUARIO;
+    const ingresosUsuarioMes = ingresosBrutosMes * PORCENTAJE_USUARIO;
+
+    const ingresosEmprendimientoHoy = ingresosBrutosHoy * PORCENTAJE_EMPRENDIMIENTO;
+    const ingresosEmprendimientoSemana = ingresosBrutosSemana * PORCENTAJE_EMPRENDIMIENTO;
+    const ingresosEmprendimientoMes = ingresosBrutosMes * PORCENTAJE_EMPRENDIMIENTO;
+
     setMetrics({
-      hoy,
-      semana,
-      mes,
+      ingresosBrutosHoy,
+      ingresosBrutosSemana,
+      ingresosBrutosMes,
+      ingresosUsuarioHoy,
+      ingresosUsuarioSemana,
+      ingresosUsuarioMes,
+      ingresosEmprendimientoHoy,
+      ingresosEmprendimientoSemana,
+      ingresosEmprendimientoMes,
+      hoy: ingresosUsuarioHoy,
+      semana: ingresosUsuarioSemana,
+      mes: ingresosUsuarioMes,
       gastos: totalGastos,
       chartData
     });

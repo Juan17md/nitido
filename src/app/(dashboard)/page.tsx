@@ -69,8 +69,12 @@ export default function DashboardPage() {
   const finanzasBarberia = useFinanzasData(datosBarberia, emptyGastos, { selectedDate });
   const finanzasLavanderia = useFinanzasData(datosLavanderia, emptyGastos, { isLavanderia: true, selectedDate });
 
-  const ingresosSemana = finanzasBarberia.semana + finanzasLavanderia.semana;
-  const ingresosMes = finanzasBarberia.mes + finanzasLavanderia.mes;
+  const ingresosBrutosSemana = finanzasBarberia.ingresosBrutosSemana + finanzasLavanderia.ingresosBrutosSemana;
+  const ingresosUsuarioSemana = finanzasBarberia.ingresosUsuarioSemana + finanzasLavanderia.ingresosUsuarioSemana;
+  const ingresosEmprendimientoSemana = finanzasBarberia.ingresosEmprendimientoSemana + finanzasLavanderia.ingresosEmprendimientoSemana;
+  const ingresosBrutosMes = finanzasBarberia.ingresosBrutosMes + finanzasLavanderia.ingresosBrutosMes;
+  const ingresosUsuarioMes = finanzasBarberia.ingresosUsuarioMes + finanzasLavanderia.ingresosUsuarioMes;
+  const ingresosEmprendimientoMes = finanzasBarberia.ingresosEmprendimientoMes + finanzasLavanderia.ingresosEmprendimientoMes;
 
   const startW = startOfWeek(selectedDate, { weekStartsOn: 1 });
   const endW = endOfWeek(selectedDate, { weekStartsOn: 1 });
@@ -87,8 +91,12 @@ export default function DashboardPage() {
     return isWithinInterval(f, { start: startW, end: endW });
   });
 
-  const ingresosBarberia = barberiaSemana.reduce((acc: number, curr: any) => acc + (curr.precio || 0), 0);
-  const ingresosLavanderia = lavanderiaSemana.reduce((acc: number, curr: any) => acc + (curr.precio || 0), 0);
+  const ingresosBrutosBarberia = barberiaSemana.reduce((acc: number, curr: any) => acc + (curr.precio || 0), 0);
+  const ingresosBrutosLavanderia = lavanderiaSemana.reduce((acc: number, curr: any) => acc + (curr.precio || 0), 0);
+  const ingresosUsuarioBarberia = ingresosBrutosBarberia * 0.6;
+  const ingresosUsuarioLavanderia = ingresosBrutosLavanderia * 0.6;
+  const ingresosEmprendimientoBarberia = ingresosBrutosBarberia * 0.4;
+  const ingresosEmprendimientoLavanderia = ingresosBrutosLavanderia * 0.4;
   
   const serviciosBarberiaCount = barberiaSemana.length;
   const alquileresLavanderiaCount = lavanderiaSemana.length;
@@ -175,26 +183,26 @@ export default function DashboardPage() {
         <div className="grid gap-2 md:gap-4 grid-cols-2 lg:grid-cols-3">
           <StatCard
             title="Ingresos Semana"
-            value={`$${ingresosSemana.toFixed(2)}`}
-            description="Ecosistema total"
+            value={`$${ingresosUsuarioSemana.toFixed(2)}`}
+            description={`Bruto: $${ingresosBrutosSemana.toFixed(2)} • Emp: $${ingresosEmprendimientoSemana.toFixed(2)}`}
             icon={TrendingUp}
           />
           <StatCard
             title="Ingresos Mes"
-            value={`$${ingresosMes.toFixed(2)}`}
-            description="Total del mes seleccionado"
+            value={`$${ingresosUsuarioMes.toFixed(2)}`}
+            description={`Bruto: $${ingresosBrutosMes.toFixed(2)} • Emp: $${ingresosEmprendimientoMes.toFixed(2)}`}
             icon={DollarSign}
           />
           <StatCard
             title="Ingresos Barbería"
-            value={`$${ingresosBarberia.toFixed(2)}`}
-            description="Total semanal"
+            value={`$${ingresosUsuarioBarberia.toFixed(2)}`}
+            description={`Bruto: $${ingresosBrutosBarberia.toFixed(2)} • Emp: $${ingresosEmprendimientoBarberia.toFixed(2)}`}
             icon={Scissors}
           />
           <StatCard
             title="Ingresos Lavandería"
-            value={`$${ingresosLavanderia.toFixed(2)}`}
-            description="Total semanal"
+            value={`$${ingresosUsuarioLavanderia.toFixed(2)}`}
+            description={`Bruto: $${ingresosBrutosLavanderia.toFixed(2)} • Emp: $${ingresosEmprendimientoLavanderia.toFixed(2)}`}
             icon={Waves}
           />
           <StatCard

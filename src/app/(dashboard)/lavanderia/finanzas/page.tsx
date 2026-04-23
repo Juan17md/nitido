@@ -67,20 +67,20 @@ export default function LavanderiaFinanzasPage() {
       <div className="grid gap-2 md:gap-4 grid-cols-2 md:grid-cols-4">
         <StatCard
           title="Ingresos Hoy"
-          value={`$${metrics.hoy.toFixed(2)}`}
-          description="Total diario"
+          value={`$${metrics.ingresosUsuarioHoy.toFixed(2)}`}
+          description={`Bruto: $${metrics.ingresosBrutosHoy.toFixed(2)} • Emp: $${metrics.ingresosEmprendimientoHoy.toFixed(2)}`}
           icon={TrendingUp}
         />
         <StatCard
           title="Semana"
-          value={`$${metrics.semana.toFixed(2)}`}
-          description="Últimos 7 días"
+          value={`$${metrics.ingresosUsuarioSemana.toFixed(2)}`}
+          description={`Bruto: $${metrics.ingresosBrutosSemana.toFixed(2)} • Emp: $${metrics.ingresosEmprendimientoSemana.toFixed(2)}`}
           icon={Wallet}
         />
         <StatCard
           title="Mes"
-          value={`$${metrics.mes.toFixed(2)}`}
-          description="Total acumulado"
+          value={`$${metrics.ingresosUsuarioMes.toFixed(2)}`}
+          description={`Bruto: $${metrics.ingresosBrutosMes.toFixed(2)} • Emp: $${metrics.ingresosEmprendimientoMes.toFixed(2)}`}
           icon={TrendingUp}
         />
         <StatCard
