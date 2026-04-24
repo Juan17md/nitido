@@ -7,7 +7,8 @@ import {
   Clock, 
   Settings, 
   TrendingUp, 
-  DollarSign 
+  DollarSign,
+  Trash2 
 } from "lucide-react";
 import { 
   Card, 
@@ -34,10 +35,12 @@ import {
   subscribeServiciosLavanderia, 
   subscribeAlquileresLavanderia, 
   subscribeMaquinas,
+  eliminarAlquiler,
   type ServicioLavanderia,
   type AlquilerLavanderia,
   type Maquina
 } from "@/lib/lavanderia-service";
+import { toast } from "sonner";
 
 // Components
 import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
@@ -60,6 +63,18 @@ export default function LavanderiaPage() {
       unsubMaquinas();
     };
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (confirm("¿Estás seguro de eliminar este alquiler?")) {
+      try {
+        await eliminarAlquiler(id);
+        toast.success("Alquiler eliminado");
+      } catch (error) {
+        console.error(error);
+        toast.error("Error al eliminar el alquiler");
+      }
+    }
+  };
 
   // Ingresos del mes: cobro al registrar (fecha de entrada del pedido)
   const inicioMes = new Date();
@@ -188,6 +203,9 @@ export default function LavanderiaPage() {
                           >
                             {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
                           </Badge>
+                          <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:bg-red-50 hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -227,9 +245,14 @@ export default function LavanderiaPage() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right pr-6 md:pr-4">
-                              <span className="text-[11px] font-bold text-slate-900 tabular-nums whitespace-nowrap">
-                                ${row.precio.toFixed(2)}
-                              </span>
+                              <div className="flex justify-end items-center gap-1">
+                                <span className="text-[11px] font-bold text-slate-900 tabular-nums whitespace-nowrap">
+                                  ${row.precio.toFixed(2)}
+                                </span>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 transition-colors md:hover:bg-red-50 md:hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
