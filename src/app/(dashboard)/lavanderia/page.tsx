@@ -44,6 +44,7 @@ import { toast } from "sonner";
 
 // Components
 import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
+import { EditarAlquilerDialog } from "@/components/lavanderia/EditarAlquilerDialog";
 
 export default function LavanderiaPage() {
   // Estado real de datos
@@ -203,9 +204,12 @@ export default function LavanderiaPage() {
                           >
                             {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
                           </Badge>
-                          <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:bg-red-50 hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            <EditarAlquilerDialog alquiler={row} servicios={servicios} />
+                            <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:bg-red-50 hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -219,7 +223,8 @@ export default function LavanderiaPage() {
                           <TableHead className="whitespace-nowrap pl-6 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pl-4">Cliente</TableHead>
                           <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Servicio</TableHead>
                           <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Recepción</TableHead>
-                          <TableHead className="whitespace-nowrap pr-6 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pr-4">Monto</TableHead>
+                          <TableHead className="whitespace-nowrap text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Monto</TableHead>
+                          <TableHead className="whitespace-nowrap pr-6 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pr-4">Acciones</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -244,11 +249,14 @@ export default function LavanderiaPage() {
                                 {!row.fechaRecibida ? "Por recibir" : row.recepcionAutomatica ? "Recibida auto" : "Recibida manual"}
                               </Badge>
                             </TableCell>
+                            <TableCell className="text-right">
+                              <span className="text-[11px] font-bold text-slate-900 tabular-nums whitespace-nowrap">
+                                ${row.precio.toFixed(2)}
+                              </span>
+                            </TableCell>
                             <TableCell className="text-right pr-6 md:pr-4">
                               <div className="flex justify-end items-center gap-1">
-                                <span className="text-[11px] font-bold text-slate-900 tabular-nums whitespace-nowrap">
-                                  ${row.precio.toFixed(2)}
-                                </span>
+                                <EditarAlquilerDialog alquiler={row} servicios={servicios} />
                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 transition-colors md:hover:bg-red-50 md:hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
                                   <Trash2 className="h-4 w-4" />
                                 </Button>

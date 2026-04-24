@@ -6,7 +6,8 @@ import {
   Scissors, 
   ClipboardList, 
   TrendingUp, 
-  DollarSign
+  DollarSign,
+  Trash2
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,15 +29,18 @@ import {
   subscribeServicios, 
   subscribeHistorial, 
   subscribeInventario,
+  eliminarVenta,
   type Servicio,
   type HistorialServicio,
   type Producto 
 } from "@/lib/barberia-service";
+import { toast } from "sonner";
 
 // Importar nuevos diálogos
 import { RegistrarCorteDialog } from "@/components/barberia/RegistrarCorteDialog";
 import { NuevoServicioDialog } from "@/components/barberia/NuevoServicioDialog";
 import { AjustarStockDialog } from "@/components/barberia/AjustarStockDialog";
+import { EditarVentaDialog } from "@/components/barberia/EditarVentaDialog";
 
 export default function BarberiaPage() {
   // Estado real de datos
@@ -56,6 +60,18 @@ export default function BarberiaPage() {
       unsubInventario();
     };
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (confirm("¿Estás seguro de eliminar este registro?")) {
+      try {
+        await eliminarVenta(id);
+        toast.success("Registro eliminado");
+      } catch (error) {
+        console.error(error);
+        toast.error("Error al eliminar el registro");
+      }
+    }
+  };
 
   // Cálculos dinámicos con filtros temporales reales
   const now = new Date();
@@ -169,9 +185,12 @@ export default function BarberiaPage() {
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-[10px] font-medium text-slate-500 uppercase tracking-[0.12em]">{row.cliente}</span>
-                          <span className="text-[10px] font-bold text-slate-400 tabular-nums uppercase">
-                            {row.fecha.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <EditarVentaDialog venta={row} servicios={servicios} />
+                            <Button variant="ghost" size="icon" className="h-9 w-9 text-slate-400 hover:bg-red-50 hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -185,7 +204,7 @@ export default function BarberiaPage() {
                           <TableHead className="whitespace-nowrap pl-6 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pl-4">Servicio</TableHead>
                           <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Cliente</TableHead>
                           <TableHead className="whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Monto</TableHead>
-                          <TableHead className="whitespace-nowrap pr-6 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pr-4">Hora</TableHead>
+                          <TableHead className="whitespace-nowrap pr-6 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 md:pr-4">Acciones</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -203,9 +222,12 @@ export default function BarberiaPage() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-right pr-6 md:pr-4">
-                              <span className="whitespace-nowrap text-[11px] font-bold tabular-nums text-slate-600">
-                                {row.fecha.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
+                              <div className="flex justify-end items-center gap-1">
+                                <EditarVentaDialog venta={row} servicios={servicios} />
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 transition-colors md:hover:bg-red-50 md:hover:text-red-500" onClick={() => handleDelete(row.id!)} title="Eliminar">
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}

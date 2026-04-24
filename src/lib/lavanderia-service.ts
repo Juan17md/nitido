@@ -169,6 +169,11 @@ export const actualizarEstadoPedido = async (id: string, nuevoEstado: AlquilerLa
   await updateDoc(ref, { estado: nuevoEstado });
 };
 
+export const actualizarAlquiler = async (id: string, datos: Partial<AlquilerLavanderia>) => {
+  const ref = doc(db, "lavanderia_pedidos", id);
+  return updateDoc(ref, datos);
+};
+
 export const eliminarAlquiler = async (id: string) => {
   // Leer el pedido antes de eliminarlo para liberar la máquina si aplica
   const pedidoRef = doc(db, "lavanderia_pedidos", id);

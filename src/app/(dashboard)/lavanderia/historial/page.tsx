@@ -24,6 +24,7 @@ import {
   eliminarAlquiler
 } from "@/lib/lavanderia-service";
 import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
+import { EditarAlquilerDialog } from "@/components/lavanderia/EditarAlquilerDialog";
 import { toast } from "sonner";
 
 export default function LavanderiaHistorialPage() {
@@ -142,6 +143,7 @@ export default function LavanderiaHistorialPage() {
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[10px] font-medium text-slate-500 uppercase tracking-wider">{row.nombreServicio} • ${row.precio.toFixed(2)}</span>
                 <div className="flex items-center gap-1">
+                  <EditarAlquilerDialog alquiler={row} servicios={servicios} />
                   <Button
                     variant="ghost"
                     size="icon"
@@ -201,6 +203,7 @@ export default function LavanderiaHistorialPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end items-center gap-1">
+                        <EditarAlquilerDialog alquiler={row} servicios={servicios} />
                         <Button
                           variant="ghost"
                           size="icon"
