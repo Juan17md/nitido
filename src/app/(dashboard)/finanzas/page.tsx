@@ -13,12 +13,16 @@ import { ComprarDolaresDialog } from "@/components/finanzas/ComprarDolaresDialog
 import { toast } from "sonner";
 import { startOfWeek, endOfWeek, isWithinInterval } from "date-fns";
 import { WeekSelector } from "@/components/dashboard/WeekSelector";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export default function FinanzasGlobalesPage() {
   const [datosBarberia, setDatosBarberia] = useState<any[]>([]);
   const [datosLavanderia, setDatosLavanderia] = useState<any[]>([]);
   const [comprasDolares, setComprasDolares] = useState<CompraDolares[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const unsubBarberia = subBarberia(setDatosBarberia);
@@ -43,14 +47,19 @@ export default function FinanzasGlobalesPage() {
   const ingresosUsuarioMes = finanzasBarberia.ingresosUsuarioMes + finanzasLavanderia.ingresosUsuarioMes;
   const ingresosEmprendimientoMes = finanzasBarberia.ingresosEmprendimientoMes + finanzasLavanderia.ingresosEmprendimientoMes;
 
-  const handleDeleteCompra = async (id: string) => {
-    if (confirm("¿Estás seguro de eliminar este registro?")) {
-      try {
-        await eliminarCompraDolares(id);
-        toast.success("Compra eliminada");
-      } catch (error) {
-        toast.error("Error al eliminar la compra");
-      }
+  const handleDeleteCompra = async () => {
+    if (!itemToDelete) return;
+    
+    setIsDeleting(true);
+    try {
+      await eliminarCompraDolares(itemToDelete);
+      toast.success("Compra eliminada");
+      setDeleteConfirmOpen(false);
+      setItemToDelete(null);
+    } catch (error) {
+      toast.error("Error al eliminar la compra");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -154,20 +163,19 @@ export default function FinanzasGlobalesPage() {
                         </span>
                         <span className="text-[10px] text-slate-300">•</span>
                         <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-600">
-                          Tasa: {compra.tasa.toFixed(2)}
+                          Tasa: Bs. {compra.tasa.toFixed(2)}
                         </span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between sm:justify-end gap-4">
                       <div className="flex flex-col items-end">
                         <span className="text-lg font-bold text-slate-900 tabular-nums">${compra.cantidad.toFixed(2)}</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                          Inversión: ${(compra.cantidad * compra.tasa).toFixed(2)}
-                          <ArrowDownRight className="h-3 w-3 text-red-400" />
-                        </span>
                       </div>
                       <button 
-                        onClick={() => handleDeleteCompra(compra.id!)}
+                        onClick={() => {
+                          setItemToDelete(compra.id!);
+                          setDeleteConfirmOpen(true);
+                        }}
                         className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 text-red-400 transition-all"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -184,6 +192,16 @@ export default function FinanzasGlobalesPage() {
           </CardContent>
         </Card>
       </motion.section>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleDeleteCompra}
+        loading={isDeleting}
+        title="Eliminar Registro"
+        description="¿Estás seguro de eliminar este registro de compra de dólares? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+      />
     </div>
   );
 }

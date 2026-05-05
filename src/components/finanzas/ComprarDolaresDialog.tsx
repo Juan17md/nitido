@@ -100,7 +100,7 @@ export function ComprarDolaresDialog() {
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="tasa" className="ml-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500 sm:text-[10px] sm:tracking-widest">Tasa de Cambio</Label>
+              <Label htmlFor="tasa" className="ml-1 text-[9px] font-bold uppercase tracking-[0.16em] text-slate-500 sm:text-[10px] sm:tracking-widest">Tasa de Cambio (Bs)</Label>
               <Input
                 id="tasa"
                 type="number"
