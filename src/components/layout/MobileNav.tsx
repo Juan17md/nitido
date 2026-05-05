@@ -15,7 +15,8 @@ import {
   Briefcase,
   Database,
   BarChart3,
-  Settings
+  Settings,
+  Wallet
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,6 +49,7 @@ const navItems = [
       { name: "Finanzas", href: "/lavanderia/finanzas", icon: BarChart3 },
     ]
   },
+  { name: "Finanzas Globales", href: "/finanzas", icon: Wallet },
 ];
 
 export function MobileNav() {
@@ -93,13 +95,13 @@ export function MobileNav() {
           </button>
 
           <Link
-            href="/historial"
+            href="/finanzas"
             className={cn(
               "flex items-center justify-center gap-2 rounded-xl text-[10px] font-bold uppercase tracking-[0.12em] transition-all duration-300 active:scale-95",
-              pathname.includes("historial") ? "bg-slate-950 text-white shadow-sm" : "text-slate-400 hover:bg-slate-50"
+              pathname.includes("/finanzas") && pathname === "/finanzas" ? "bg-slate-950 text-white shadow-sm" : "text-slate-400 hover:bg-slate-50"
             )}
           >
-            <History size={16} />
+            <Wallet size={16} />
             <span>Global</span>
           </Link>
         </nav>

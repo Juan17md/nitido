@@ -16,7 +16,8 @@ import {
   History,
   Briefcase,
   Database,
-  BarChart3
+  BarChart3,
+  Wallet
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -50,6 +51,7 @@ const navItems = [
       { name: "Finanzas", href: "/lavanderia/finanzas", icon: BarChart3 },
     ]
   },
+  { name: "Finanzas Globales", href: "/finanzas", icon: Wallet },
 ];
 
 export function Sidebar() {

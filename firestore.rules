@@ -205,6 +205,24 @@ service cloud.firestore {
       allow delete: if estaAutenticado();
     }
 
+    match /compras_dolares/{docId} {
+      allow read: if estaAutenticado();
+      allow create: if estaAutenticado()
+        && soloCamposPermitidos(["aQuien", "cantidad", "tasa", "fecha"])
+        && requiereCampos(["aQuien", "cantidad", "tasa", "fecha"])
+        && esStringNoVacio(request.resource.data.aQuien)
+        && esNumeroNoNegativo(request.resource.data.cantidad)
+        && esNumeroNoNegativo(request.resource.data.tasa)
+        && timestampValido(request.resource.data.fecha);
+      allow update: if estaAutenticado()
+        && soloCamposPermitidos(["aQuien", "cantidad", "tasa", "fecha"])
+        && esStringNoVacio(request.resource.data.aQuien)
+        && esNumeroNoNegativo(request.resource.data.cantidad)
+        && esNumeroNoNegativo(request.resource.data.tasa)
+        && timestampValido(request.resource.data.fecha);
+      allow delete: if estaAutenticado();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
