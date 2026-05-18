@@ -53,7 +53,7 @@ export function ComprarDolaresDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className={cn(
-        "h-11 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl shadow-sm inline-flex items-center justify-center transition-colors active:scale-[0.98] px-4",
+        "w-full h-11 bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl shadow-sm inline-flex items-center justify-center transition-colors active:scale-[0.98] px-4",
       )}>
         <PlusCircle className="mr-2 h-3.5 w-3.5" />
         Comprar Dólares

@@ -28,6 +28,7 @@ import { useFinanzasData } from "@/hooks/use-finanzas-data";
 // Components
 import { RegistrarCorteDialog } from "@/components/barberia/RegistrarCorteDialog";
 import { NuevoAlquilerDialog } from "@/components/lavanderia/NuevoAlquilerDialog";
+import { ComprarDolaresDialog } from "@/components/finanzas/ComprarDolaresDialog";
 
 // Services
 import { subscribeHistorial as subBarberia, subscribeInventario, subscribeServicios as subServiciosBarberia } from "@/lib/barberia-service";
@@ -161,10 +162,11 @@ export default function DashboardPage() {
       <motion.section
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-3"
+        className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-3"
       >
         <RegistrarCorteDialog servicios={serviciosBarberia} />
         <NuevoAlquilerDialog servicios={serviciosLavanderia} />
+        <ComprarDolaresDialog />
       </motion.section>
 
       {/* Stats Grid */}
